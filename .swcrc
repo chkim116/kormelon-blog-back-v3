@@ -1,0 +1,21 @@
+{
+  "env": {
+    "targets": {
+      "node": 16
+    }
+  },
+  "jsc": {
+    "parser": {
+      "syntax": "typescript"
+    },
+    "target": "es2020",
+    "baseUrl": "./",
+    "paths": {
+      "@config": ["./src/config"],
+      "@api": ["./src/api"],
+      "@models": ["./src/models"],
+      "@services": ["./src/services"],
+      "@loaders": ["./src/loaders"]
+    }
+  }
+}

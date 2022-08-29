@@ -1,0 +1,50 @@
+{
+  "name": "kormelon-blog-back-v3",
+  "version": "0.0.0",
+  "description": "kormelon blog server",
+  "main": "./dist/app.js",
+  "scripts": {
+    "test": "jest",
+    "build": "swc src -d dist",
+    "build:dev": "npm run build && cross-env NODE_ENV=development node --experimental-specifier-resolution=node --inspect dist/app.js",
+    "dev": "nodemon --ext ts --exec \"npm run build:dev\"",
+    "start": "npm run build && cross-env NODE_ENV=production node --experimental-specifier-resolution=node dist/app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chkim116/kormelon-blog-back-v3.git"
+  },
+  "keywords": [
+    "blog",
+    "blog server"
+  ],
+  "author": "kimchanghoe <cskim132@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/chkim116/kormelon-blog-back-v3/issues"
+  },
+  "homepage": "https://github.com/chkim116/kormelon-blog-back-v3#readme",
+  "dependencies": {
+    "dotenv": "^16.0.1",
+    "express": "^4.18.1"
+  },
+  "devDependencies": {
+    "@swc/cli": "^0.1.57",
+    "@swc/core": "^1.2.244",
+    "@types/express": "^4.17.13",
+    "@types/jest": "^28.1.8",
+    "@types/node": "^18.7.13",
+    "@typescript-eslint/eslint-plugin": "^5.35.1",
+    "@typescript-eslint/parser": "^5.35.1",
+    "cross-env": "^7.0.3",
+    "eslint": "^8.23.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "jest": "^29.0.1",
+    "nodemon": "^2.0.19",
+    "prettier": "^2.7.1",
+    "typescript": "^4.8.2"
+  },
+  "type": "module"
+}

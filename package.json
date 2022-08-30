@@ -1,6 +1,6 @@
 {
   "name": "kormelon-blog-back-v3",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "kormelon blog server",
   "main": "./dist/app.js",
   "scripts": {

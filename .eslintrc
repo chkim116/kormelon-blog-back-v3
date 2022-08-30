@@ -18,19 +18,31 @@
   "plugins": ["@typescript-eslint", "import"],
   "rules": {
     "import/no-unresolved": "off",
-    "@typescript-eslint/no-unused-vars": [
-      "error",
-      { "argsIgnorePattern": "^_" }
-    ],
+    "@typescript-eslint/no-unused-vars": 0,
     "import/order": [
       "error",
       {
-        "groups": ["builtin", "external", ["parent", "sibling"], "index"],
+        "groups": [
+          "builtin",
+          "external",
+          ["parent", "sibling"],
+          "index",
+          "object"
+        ],
         "pathGroups": [
           {
             "pattern": "express",
             "group": "builtin",
             "position": "before"
+          },
+          {
+            "pattern": "typeorm",
+            "group": "builtin",
+            "position": "before"
+          },
+          {
+            "pattern": "@config/**",
+            "group": "internal"
           }
         ],
         "pathGroupsExcludedImportTypes": ["builtin"],

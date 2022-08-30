@@ -1,6 +1,6 @@
 import { CreateDateColumn, UpdateDateColumn, DeleteDateColumn } from 'typeorm';
 
-export abstract class DateColumn {
+export abstract class BaseDateColumn {
   @CreateDateColumn()
   createdAt!: Date;
 

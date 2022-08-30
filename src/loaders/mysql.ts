@@ -21,7 +21,7 @@ export async function mysqlLoader() {
   await AppDataSource.initialize()
     .then((connection) => {
       console.log(
-        `DB connection success. \nDB: ${connection.options.database}\nNAME: ${connection.name}`
+        `✅ DB connection success.\n🔗 DB: ${connection.options.database}\n✏️  NAME: ${connection.name}`
       );
     })
     .catch((error) => console.log(error));

@@ -1,3 +1,5 @@
-import Sample from './Sample';
+import User from './User';
 
-export default [Sample];
+export const entities = [User];
+
+export { User };

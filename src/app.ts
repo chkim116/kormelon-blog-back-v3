@@ -1,4 +1,5 @@
 import express from 'express';
+import 'reflect-metadata';
 
 import { env } from '@config';
 import loaders from '@loaders';

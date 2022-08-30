@@ -1,10 +1,12 @@
 import {
-  Entity,
-  PrimaryGeneratedColumn,
   Column,
+  Entity,
+  JoinColumn,
   ManyToOne,
+  PrimaryGeneratedColumn,
   RelationId,
 } from 'typeorm';
+import type { Relation } from 'typeorm';
 
 import Category from './Category';
 import { BaseDateColumn } from './common/BaseDateColumn';
@@ -17,12 +19,12 @@ class SubCategory extends BaseDateColumn {
   @Column()
   value!: string;
 
-  @ManyToOne(() => Category)
-  category!: Category;
-
-  @RelationId((category: Category) => category.id)
   @Column()
   categoryId!: number;
+
+  @ManyToOne(() => Category, (category) => category.subCategories)
+  @JoinColumn({ name: 'categoryId' })
+  category!: Relation<Category>;
 }
 
 export default SubCategory;

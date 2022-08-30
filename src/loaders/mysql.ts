@@ -1,7 +1,5 @@
 import { DataSource } from 'typeorm';
 
-import 'reflect-metadata';
-
 import { env } from '@config';
 import { entities } from '@models';
 

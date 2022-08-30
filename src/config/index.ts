@@ -15,6 +15,10 @@ export const env = {
    * 현재 프로젝트의 루트 경로
    */
   cwd: process.cwd(),
+  /**
+   * 쿠키 암호를 위한 값
+   */
+  secret: process.env.SECRET,
 
   /**
    * DB host

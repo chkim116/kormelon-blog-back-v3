@@ -5,7 +5,7 @@ import { DateColumn } from './common/DateColumn';
 type UserRoleType = ['admin', 'member'];
 
 @Entity('User')
-export class User extends DateColumn {
+class User extends DateColumn {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
@@ -17,6 +17,9 @@ export class User extends DateColumn {
 
   @Column()
   email!: string;
+
+  @Column({ select: false })
+  password!: string;
 
   @Column({
     type: 'enum',

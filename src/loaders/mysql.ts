@@ -3,9 +3,9 @@ import { DataSource } from 'typeorm';
 import 'reflect-metadata';
 
 import { env } from '@config';
-import entities from '@models';
+import { entities } from '@models';
 
-const AppDataSource = new DataSource({
+export const AppDataSource = new DataSource({
   type: 'mysql',
   host: env.dbHost,
   port: Number(env.dbPort),

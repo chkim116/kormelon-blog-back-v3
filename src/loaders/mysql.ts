@@ -14,6 +14,7 @@ const AppDataSource = new DataSource({
   database: env.dbName,
   cache: true,
   logging: true,
+  synchronize: false,
   entities,
 });
 

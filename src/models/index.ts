@@ -1,3 +1,3 @@
-import Sample from './Sample';
+import User from './User';
 
-export default [Sample];
+export default [User];

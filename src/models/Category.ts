@@ -12,7 +12,7 @@ class Category extends BaseDateColumn {
   value!: string;
 
   @OneToMany(() => SubCategory, (SubCategory) => SubCategory.categoryId, {
-    cascade: true,
+    onDelete: 'CASCADE',
   })
   subCategories!: SubCategory[];
 }

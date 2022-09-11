@@ -3,10 +3,12 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
 import Category from './Category';
+import Comment from './Comment';
 import { BaseDateColumn } from './common/BaseDateColumn';
 import SubCategory from './SubCategory';
 import User from './User';
@@ -58,6 +60,9 @@ class Post extends BaseDateColumn {
   })
   @JoinColumn({ name: 'userId' })
   user!: User;
+
+  @OneToMany(() => Comment, (comment) => comment.postId)
+  comments!: Comment[];
 }
 
 export default Post;

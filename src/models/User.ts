@@ -1,5 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 
+import Comment from './Comment';
 import { BaseDateColumn } from './common/BaseDateColumn';
 import Post from './Post';
 
@@ -33,6 +34,9 @@ class User extends BaseDateColumn {
     onDelete: 'CASCADE',
   })
   posts!: Post[];
+
+  @OneToMany(() => Comment, (comment) => comment.userId)
+  comments!: Comment[];
 }
 
 export default User;

@@ -2,6 +2,8 @@ import {
   Column,
   Entity,
   JoinColumn,
+  JoinTable,
+  ManyToMany,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -11,6 +13,7 @@ import Category from './Category';
 import Comment from './Comment';
 import { BaseDateColumn } from './common/BaseDateColumn';
 import SubCategory from './SubCategory';
+import { Tag } from './Tag';
 import User from './User';
 
 @Entity('Post')
@@ -63,6 +66,12 @@ class Post extends BaseDateColumn {
 
   @OneToMany(() => Comment, (comment) => comment.postId)
   comments!: Comment[];
+
+  @ManyToMany(() => Tag, (tag) => tag.posts, {
+    cascade: true,
+  })
+  @JoinTable()
+  tags!: Tag[];
 }
 
 export default Post;

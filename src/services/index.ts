@@ -1,3 +1,4 @@
-export * from './user/user.service';
-export * from './category/category.service';
-export * from './subCategory/subCategory.service';
+export * from './user';
+export * from './category';
+export * from './subCategory';
+export * from './post';

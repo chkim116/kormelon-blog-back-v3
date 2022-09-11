@@ -37,6 +37,9 @@ class CommentReply extends BaseDateColumn {
   @JoinColumn({ name: 'userId' })
   user!: User;
 
+  @Column()
+  commentId!: string;
+
   @ManyToOne(() => Comment, (comment) => comment.commentReplies, {
     cascade: true,
   })

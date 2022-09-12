@@ -9,7 +9,6 @@ export const userSignUp = async (req: Request, res: Response) => {
 
     res.status(201).send({ status: 201, payload: null });
   } catch (err: any) {
-    console.log(err);
     res.status(400).send({ status: 400, message: err.message });
   }
 };

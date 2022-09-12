@@ -59,8 +59,9 @@ class UserService extends Repository<User> {
       throw new Error('존재하지 않는 유저입니다.');
     }
 
-    const isPasswordCorrect = await bcrypt.compare(password, user.password);
+    const { password: userPassword, ...withoutPassword } = user;
 
+    const isPasswordCorrect = await bcrypt.compare(password, userPassword);
     if (!isPasswordCorrect) {
       throw new Error('비밀번호가 틀립니다.');
     }
@@ -68,10 +69,13 @@ class UserService extends Repository<User> {
     // TODO: access, refresh
     const token = jwt.sign({ userId: user.id }, env.secret || 'warning');
 
-    return { token, user };
+    return { token, user: withoutPassword };
   }
 
   private findByEmail(email: string): Promise<User | undefined> {
-    return this.findOne({ where: { email } });
+    return this.findOne({
+      where: { email },
+      select: ['id', 'profileImage', 'role', 'username', 'password'],
+    });
   }
 }

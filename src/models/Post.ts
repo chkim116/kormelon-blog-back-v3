@@ -13,7 +13,7 @@ import Category from './Category';
 import Comment from './Comment';
 import { BaseDateColumn } from './common/BaseDateColumn';
 import SubCategory from './SubCategory';
-import { Tag } from './Tag';
+import Tag from './Tag';
 import User from './User';
 
 @Entity('Post')

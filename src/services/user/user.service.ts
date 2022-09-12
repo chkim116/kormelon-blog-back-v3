@@ -1,4 +1,4 @@
-import { Repository } from 'typeorm';
+import { EntityRepository, getCustomRepository, Repository } from 'typeorm';
 
 import { env } from '@config';
 import { User } from '@models';
@@ -7,9 +7,12 @@ import jwt from 'jsonwebtoken';
 
 import { UserSignInDto, UserSignUpDto } from './user.dto';
 
-export class UserService {
-  constructor(private userRepository: Repository<User>) {}
+export function userService() {
+  return getCustomRepository(UserService, env.mode);
+}
 
+@EntityRepository(User)
+class UserService extends Repository<User> {
   /**
    * 유저의 회원가입
    */
@@ -25,7 +28,7 @@ export class UserService {
       throw new Error('이미 존재하는 유저입니다.');
     }
 
-    const existsUsername = await this.userRepository.findOne({
+    const existsUsername = await this.findOne({
       where: { username },
     });
 
@@ -43,7 +46,7 @@ export class UserService {
       password: hashPassword,
     };
 
-    await this.userRepository.save(newUser);
+    await this.save(newUser);
   }
 
   /**
@@ -68,7 +71,7 @@ export class UserService {
     return { token, user };
   }
 
-  private findByEmail(email: string): Promise<User | null> {
-    return this.userRepository.findOne({ where: { email } });
+  private findByEmail(email: string): Promise<User | undefined> {
+    return this.findOne({ where: { email } });
   }
 }

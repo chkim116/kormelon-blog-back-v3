@@ -10,12 +10,16 @@ export function categoryService() {
 // TODO: 관리자만 가능하도록 middleware 추가
 @EntityRepository(Category)
 class CategoryService extends Repository<Category> {
+  async getCategories() {
+    return await this.find({ select: ['id', 'value'] });
+  }
+
   /**
    * 카테고리(상위)를 생성한다.
    * @param value 생성할 값
    */
   async createCategory(value: string) {
-    if (value !== '') {
+    if (value === '') {
       throw new Error('값을 입력해 주세요.');
     }
 
@@ -44,10 +48,10 @@ class CategoryService extends Repository<Category> {
       where: {
         id: categoryId,
       },
-      relations: ['subCategories'],
+      select: ['subCategories'],
     });
 
-    if (!category?.subCategories.length) {
+    if (category?.subCategories.length) {
       throw new Error('하위 카테고리를 모두 삭제해 주세요.');
     }
 

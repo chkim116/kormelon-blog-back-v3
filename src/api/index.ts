@@ -1,11 +1,12 @@
 import { Router } from 'express';
 
-import { userRouter } from './routes';
+import { categoryRouter, userRouter } from './routes';
 
 export default () => {
   const app = Router();
 
   userRouter(app);
+  categoryRouter(app);
 
   return app;
 };

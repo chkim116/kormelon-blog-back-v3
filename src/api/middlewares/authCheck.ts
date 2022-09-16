@@ -29,7 +29,6 @@ export function authCheck(req: Request, res: Response, next: NextFunction) {
     }
 
     req.user = user;
-    console.log(user);
 
     next();
   });

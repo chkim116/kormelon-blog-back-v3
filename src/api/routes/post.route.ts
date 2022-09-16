@@ -8,7 +8,7 @@ import {
   getPosts,
   getPost,
   updatePost,
-} from '../controller/post.controller';
+} from '../controller';
 import { validationCheck } from '../middlewares';
 import { adminCheck } from '../middlewares/adminCheck';
 import { authCheck } from '../middlewares/authCheck';

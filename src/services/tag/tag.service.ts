@@ -19,12 +19,22 @@ class TagService extends Repository<Tag> {
    * @returns
    */
   async getTags(ids?: number[]) {
-    const tags = await this.createQueryBuilder('tags')
-      .where(ids ? In(ids) : '')
-      .select(['id', 'value'])
-      .leftJoin('tags.posts', 'post')
-      .addSelect(['post.id'])
-      .getMany();
+    let tags;
+
+    if (ids?.length) {
+      tags = await this.createQueryBuilder('tags')
+        .where(In(ids))
+        .select(['tags.id', 'tags.value'])
+        .leftJoin('tags.posts', 'post')
+        .addSelect(['post.id'])
+        .getMany();
+    } else {
+      tags = await this.createQueryBuilder('tags')
+        .select(['tags.id', 'tags.value'])
+        .leftJoin('tags.posts', 'post')
+        .addSelect(['post.id'])
+        .getMany();
+    }
 
     const total = await this.count();
 
@@ -44,7 +54,7 @@ class TagService extends Repository<Tag> {
     await this.exist(tagId);
 
     return await this.createQueryBuilder('tags')
-      .select(['id', 'value'])
+      .select(['tags.id', 'tags.value'])
       .leftJoin('tags.posts', 'post')
       .addSelect(['post.id'])
       .getOne();
@@ -55,14 +65,22 @@ class TagService extends Repository<Tag> {
    *
    * @param params
    */
-  async createTags(params: TagCreateParamsEntity[]) {
-    const tags = params.map(async (value) => {
-      const tag = await this.create(value);
-      await this.save(tag);
-    });
+  async createTags({ values }: TagCreateParamsEntity) {
+    const exist = await this.findOne({ where: { value: In(values) } });
+
+    if (exist) {
+      throw new Error('이미 존재하는 태그입니다.');
+    }
+
+    const promises = () =>
+      values.map(async (value) => {
+        const tag = new Tag();
+        tag.value = value;
+        await this.save(tag);
+      });
 
     try {
-      await Promise.all(tags);
+      await Promise.all(promises());
     } catch (err: any) {
       throw new Error(err.message);
     }

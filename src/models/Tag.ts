@@ -1,4 +1,10 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToMany } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  ManyToMany,
+  JoinTable,
+} from 'typeorm';
 
 import Post from './Post';
 
@@ -11,6 +17,7 @@ class Tag {
   value!: string;
 
   @ManyToMany(() => Post, (post) => post.tags)
+  @JoinTable()
   posts!: Post[];
 }
 

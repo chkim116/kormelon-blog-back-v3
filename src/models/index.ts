@@ -16,4 +16,4 @@ export const entities = [
   Tag,
 ];
 
-export { Category, Comment, CommentReply, SubCategory, User, Post };
+export { Category, Comment, CommentReply, SubCategory, User, Post, Tag };

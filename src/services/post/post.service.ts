@@ -26,6 +26,7 @@ class PostService extends Repository<Post> {
         'post.createdAt',
         'post.thumbnail',
         'post.view',
+        'post.like',
       ])
       .leftJoin('post.category', 'category')
       .addSelect(['category.id', 'category.value'])
@@ -62,6 +63,7 @@ class PostService extends Repository<Post> {
         'post.content',
         'post.view',
         'post.createdAt',
+        'post.like',
       ])
       .leftJoin('post.category', 'category')
       .addSelect(['category.id', 'category.value'])
@@ -69,6 +71,8 @@ class PostService extends Repository<Post> {
       .addSelect(['subCategory.id', 'subCategory.value'])
       .leftJoin('post.user', 'user')
       .addSelect(['user.id', 'user.username', 'user.profileImage'])
+      .leftJoin('post.tags', 'tag')
+      .addSelect(['tag.id', 'tag.value'])
       .getOne();
 
     return post;

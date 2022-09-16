@@ -46,6 +46,9 @@ class Post extends BaseDateColumn {
   @Column()
   userId!: string;
 
+  @Column({ default: 0 })
+  like!: number;
+
   @ManyToOne(() => Category, (category) => category.posts, {
     onDelete: 'CASCADE',
   })

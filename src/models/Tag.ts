@@ -4,8 +4,8 @@ import Post from './Post';
 
 @Entity('Tag')
 class Tag {
-  @PrimaryGeneratedColumn('uuid')
-  id!: string;
+  @PrimaryGeneratedColumn()
+  id!: number;
 
   @Column()
   value!: string;

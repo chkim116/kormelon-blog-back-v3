@@ -6,8 +6,9 @@ import {
   createPost,
   deletePost,
   getPosts,
-  getPost,
+  getPostById,
   updatePost,
+  likePost,
 } from '../controller';
 import { validationCheck } from '../middlewares';
 import { adminCheck } from '../middlewares/adminCheck';
@@ -27,7 +28,7 @@ export const postRouter = (app: Router) => {
     ],
     getPosts
   );
-  router.get('/:id', getPost);
+  router.get('/:id', getPostById);
   router.post(
     '/',
     authCheck,
@@ -65,7 +66,15 @@ export const postRouter = (app: Router) => {
     '/',
     authCheck,
     adminCheck,
-    [query('id', '삭제할 id를 입력해 주세요.').exists().isNumeric()],
+    [
+      query('id', '삭제할 id가 필요합니다.').exists().isNumeric(),
+      validationCheck,
+    ],
     deletePost
+  );
+  router.post(
+    '/like',
+    [query('id', 'id가 필요합니다.').exists().isNumeric(), validationCheck],
+    likePost
   );
 };

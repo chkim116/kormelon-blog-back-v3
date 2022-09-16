@@ -28,11 +28,13 @@ export const getPosts = async (req: Request, res: Response) => {
   }
 };
 
-export const getPost = async (req: Request, res: Response) => {
+export const getPostById = async (req: Request, res: Response) => {
   const { id } = req.params;
 
   try {
     const post = await postService().getPostById(Number(id));
+    await postService().addPostView(Number(id));
+
     res.status(200).send({ status: 200, payload: post });
   } catch (err: any) {
     res.status(400).send({ status: 400, message: err.message });
@@ -86,6 +88,20 @@ export const deletePost = async (req: Request, res: Response) => {
     const postId = Number(id);
 
     await postService().deletePost(postId);
+    res.status(200).send({ status: 200, payload: null });
+  } catch (err: any) {
+    res.status(400).send({ status: 400, message: err.message });
+  }
+};
+
+export const likePost = async (req: Request, res: Response) => {
+  const { id } = req.query;
+
+  try {
+    const postId = Number(id);
+
+    await postService().addPostLike(postId);
+
     res.status(200).send({ status: 200, payload: null });
   } catch (err: any) {
     res.status(400).send({ status: 400, message: err.message });

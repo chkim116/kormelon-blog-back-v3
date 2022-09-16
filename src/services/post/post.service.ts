@@ -114,6 +114,36 @@ class PostService extends Repository<Post> {
   }
 
   /**
+   * 게시글 좋아요
+   *
+   * @param id
+   */
+  async addPostLike(id: number) {
+    if (!isFinite(id)) {
+      throw new Error('유효한 숫자가 아닙니다.');
+    }
+
+    const { like } = await this.exist(id);
+
+    await this.update(id, { like: like + 1 });
+  }
+
+  /**
+   * 게시글 조회수 증가
+   *
+   * @param id
+   */
+  async addPostView(id: number) {
+    if (!isFinite(id)) {
+      throw new Error('유효한 숫자가 아닙니다.');
+    }
+
+    const { view } = await this.exist(id);
+
+    await this.update(id, { view: view + 1 });
+  }
+
+  /**
    * 게시글이 존재하는지 확인한다.
    *
    * @param id

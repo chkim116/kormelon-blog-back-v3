@@ -7,6 +7,7 @@ import {
   tagRouter,
   userRouter,
 } from './routes';
+import { commentRouter } from './routes/comment.route';
 
 export default () => {
   const app = Router();
@@ -16,6 +17,7 @@ export default () => {
   subCategoryRouter(app);
   postRouter(app);
   tagRouter(app);
+  commentRouter(app);
 
   return app;
 };

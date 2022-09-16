@@ -11,7 +11,15 @@ export function categoryService() {
 @EntityRepository(Category)
 class CategoryService extends Repository<Category> {
   async getCategories() {
-    return await this.find({ select: ['id', 'value'] });
+    return this.createQueryBuilder('category')
+      .select(['category.id', 'category.value'])
+      .leftJoin('category.subCategories', 'subCategory')
+      .addSelect([
+        'subCategory.id',
+        'subCategory.value',
+        'subCategory.categoryId',
+      ])
+      .getMany();
   }
 
   /**
@@ -33,6 +41,12 @@ class CategoryService extends Repository<Category> {
    * @param value 수정될 값
    */
   async updateCategory(categoryId: number, value: string) {
+    const exist = await this.findOne(categoryId);
+
+    if (!exist) {
+      throw new Error('존재하지 않는 카테고리입니다.');
+    }
+
     await this.update(categoryId, { value });
   }
 
@@ -44,15 +58,18 @@ class CategoryService extends Repository<Category> {
    * @param categoryId 카테고리 id
    */
   async deleteCategory(categoryId: number) {
-    const category = await this.findOne({
-      where: {
-        id: categoryId,
-      },
-      select: ['subCategories'],
-    });
+    const category = await this.createQueryBuilder('category')
+      .where('category.id = :id', { id: categoryId })
+      .leftJoin('category.subCategories', 'subCategory')
+      .addSelect(['subCategory.id'])
+      .getOne();
+
+    if (!category) {
+      throw new Error('존재하지 않는 카테고리입니다.');
+    }
 
     if (category?.subCategories.length) {
-      throw new Error('하위 카테고리를 모두 삭제해 주세요.');
+      throw new Error('하위 카테고리를 먼저 삭제해 주세요.');
     }
 
     await this.delete(categoryId);

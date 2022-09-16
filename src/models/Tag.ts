@@ -17,7 +17,6 @@ class Tag {
   value!: string;
 
   @ManyToMany(() => Post, (post) => post.tags)
-  @JoinTable()
   posts!: Post[];
 }
 

@@ -23,7 +23,7 @@ class TagService extends Repository<Tag> {
 
     if (ids?.length) {
       tags = await this.createQueryBuilder('tags')
-        .where(In(ids))
+        .where({ id: In(ids) })
         .select(['tags.id', 'tags.value'])
         .leftJoin('tags.posts', 'post')
         .addSelect(['post.id'])
@@ -54,6 +54,7 @@ class TagService extends Repository<Tag> {
     await this.exist(tagId);
 
     return await this.createQueryBuilder('tags')
+      .where({ id: tagId })
       .select(['tags.id', 'tags.value'])
       .leftJoin('tags.posts', 'post')
       .addSelect(['post.id'])

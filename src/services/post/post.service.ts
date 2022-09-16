@@ -94,9 +94,9 @@ class PostService extends Repository<Post> {
    * @param param0
    */
   async updatePost({ id, ...params }: PostUpdateParamsEntity) {
-    await this.exist(id);
+    const post = await this.exist(id);
 
-    await this.update(id, params);
+    await this.save({ ...post, ...params });
   }
 
   /**
@@ -126,6 +126,6 @@ class PostService extends Repository<Post> {
       throw new Error('존재하지 않는 게시글입니다.');
     }
 
-    return true;
+    return post;
   }
 }

@@ -1,4 +1,4 @@
-export interface PostCreateParams {
+export interface PostCreateParamsDto {
   /**
    * 게시글의 썸네일
    */
@@ -12,7 +12,7 @@ export interface PostCreateParams {
    *
    * true라면 어드민 제외 숨겨진다.
    */
-  isPrivate: boolean;
+  isPrivate?: boolean;
   /**
    * 게시글의 컨텐츠
    */
@@ -25,15 +25,22 @@ export interface PostCreateParams {
    * 서브 카테고리 아이디
    */
   subCategoryId: number;
+}
+
+export interface PostCreateParamsEntity extends PostCreateParamsDto {
   /**
    * 유저 아이디
    */
   userId: string;
 }
 
-export interface PostUpdateParams extends PostCreateParams {
+export interface PostUpdateParamsDto extends PostCreateParamsEntity {
   /**
    * 게시글의 아이디
    */
   id: number;
 }
+
+export interface PostUpdateParamsEntity
+  extends PostUpdateParamsDto,
+    PostCreateParamsEntity {}

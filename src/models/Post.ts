@@ -64,7 +64,7 @@ class Post extends BaseDateColumn {
   @JoinColumn({ name: 'userId' })
   user!: User;
 
-  @OneToMany(() => Comment, (comment) => comment.postId)
+  @OneToMany(() => Comment, (comment) => comment.post)
   comments!: Comment[];
 
   @ManyToMany(() => Tag, (tag) => tag.posts, {

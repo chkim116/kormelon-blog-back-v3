@@ -1,4 +1,9 @@
-import { EntityRepository, getCustomRepository, Repository } from 'typeorm';
+import {
+  EntityRepository,
+  getCustomRepository,
+  Like,
+  Repository,
+} from 'typeorm';
 
 import { env } from '@config';
 import { Post } from '@models';
@@ -16,10 +21,13 @@ class PostService extends Repository<Post> {
    *
    * @param page 페이지 단위
    * @param per 페이지 당 게시글 수
+   * @params keyword 페이지 제목
    * @returns
    */
-  async getPosts(page: number, per: number) {
-    const posts = await this.createQueryBuilder('post')
+  async getPosts(page: number, per: number, keyword: string) {
+    const [posts, total] = await this.createQueryBuilder('post')
+      .where({ title: Like(`%${keyword}%`) })
+      .orWhere({ content: Like(`%${keyword}%`) })
       .select([
         'post.title',
         'post.id',
@@ -34,11 +42,10 @@ class PostService extends Repository<Post> {
       .addSelect(['subCategory.id', 'subCategory.value'])
       .leftJoin('post.comments', 'comment')
       .addSelect(['comment.id'])
+      .orderBy({ 'post.id': 'DESC' })
       .skip((page - 1) * per)
       .take(per)
-      .getMany();
-
-    const total = await this.count();
+      .getManyAndCount();
 
     return {
       total,

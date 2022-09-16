@@ -12,12 +12,13 @@ import {
 } from '@services';
 
 export const getPosts = async (req: Request, res: Response) => {
-  const { page = 1, per = 10 } = req.query;
+  const { page = 1, per = 10, keyword = '' } = req.query;
 
   try {
     const { posts, total } = await postService().getPosts(
       Number(page),
-      Number(per)
+      Number(per),
+      String(keyword)
     );
 
     res

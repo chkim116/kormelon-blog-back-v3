@@ -1,6 +1,8 @@
 import { json, urlencoded } from 'express';
 import type { Express } from 'express';
 
+import routes from '@api';
+import { env } from '@config';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import helmet from 'helmet';
@@ -24,4 +26,7 @@ export async function expressConfig(app: Express) {
   app.use(cookieParser());
   app.use(json());
   app.use(urlencoded({ extended: true }));
+
+  // routes
+  app.use(env.prefix, routes());
 }

@@ -19,6 +19,10 @@ export const env = {
    * 쿠키 암호를 위한 값
    */
   secret: process.env.SECRET,
+  /**
+   * 서버 주소 prefix
+   */
+  prefix: '/api',
 
   /**
    * DB host

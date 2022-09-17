@@ -8,11 +8,11 @@ export interface UserSignUpDto {
    *
    * front에서 기본 이미지를 주도록 권장. 현재 default 값은 없음.
    */
-  profileImage: string;
+  profileImage?: string;
   /**
    * 유저가 사용할 이름
    */
-  username: string;
+  username?: string;
   /**
    * 유저의 비밀번호
    *

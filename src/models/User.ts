@@ -1,6 +1,8 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 
+import Comment from './Comment';
 import { BaseDateColumn } from './common/BaseDateColumn';
+import Post from './Post';
 
 type UserRoleType = ['admin', 'member'];
 
@@ -27,6 +29,14 @@ class User extends BaseDateColumn {
     default: 'member',
   })
   role!: UserRoleType;
+
+  @OneToMany(() => Post, (post) => post.userId, {
+    onDelete: 'CASCADE',
+  })
+  posts!: Post[];
+
+  @OneToMany(() => Comment, (comment) => comment.userId)
+  comments!: Comment[];
 }
 
 export default User;

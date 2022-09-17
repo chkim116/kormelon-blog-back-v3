@@ -3,13 +3,14 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
-  RelationId,
 } from 'typeorm';
 import type { Relation } from 'typeorm';
 
 import Category from './Category';
 import { BaseDateColumn } from './common/BaseDateColumn';
+import Post from './Post';
 
 @Entity('SubCategory')
 class SubCategory extends BaseDateColumn {
@@ -22,9 +23,16 @@ class SubCategory extends BaseDateColumn {
   @Column()
   categoryId!: number;
 
-  @ManyToOne(() => Category, (category) => category.subCategories)
+  @ManyToOne(() => Category, (category) => category.subCategories, {
+    cascade: true,
+  })
   @JoinColumn({ name: 'categoryId' })
   category!: Relation<Category>;
+
+  @OneToMany(() => Post, (post) => post.subCategory, {
+    onDelete: 'CASCADE',
+  })
+  posts!: Post[];
 }
 
 export default SubCategory;

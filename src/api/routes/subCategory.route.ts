@@ -20,7 +20,7 @@ export const subCategoryRouter = (app: Router) => {
   router.get('/', getSubCategories);
   router.post(
     '/',
-    authCheck,
+    authCheck(),
     adminCheck,
     [
       body('value', '카테고리의 값을 입력해 주세요').exists(),
@@ -33,7 +33,7 @@ export const subCategoryRouter = (app: Router) => {
   );
   router.put(
     '/',
-    authCheck,
+    authCheck(),
     adminCheck,
     [
       body('value', '카테고리의 값을 입력해 주세요').exists(),
@@ -44,7 +44,7 @@ export const subCategoryRouter = (app: Router) => {
   );
   router.delete(
     '/',
-    authCheck,
+    authCheck(),
     adminCheck,
     [
       query('id', '삭제할 카테고리의 id 값이 필요합니다.').exists().isNumeric(),

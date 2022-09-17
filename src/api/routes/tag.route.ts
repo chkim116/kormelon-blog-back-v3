@@ -14,7 +14,7 @@ export const tagRouter = (app: Router) => {
   router.get('/:id', getTagById);
   router.post(
     '/',
-    authCheck,
+    authCheck(),
     adminCheck,
     [
       body('values', '태그를 입력해 주세요.').isArray().exists(),
@@ -24,7 +24,7 @@ export const tagRouter = (app: Router) => {
   );
   router.delete(
     '/',
-    authCheck,
+    authCheck(),
     adminCheck,
     [
       query('id', '삭제할 태그의 id가 필요합니다.').exists().isNumeric(),

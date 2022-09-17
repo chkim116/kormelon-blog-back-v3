@@ -19,17 +19,17 @@ class CommentReply extends BaseDateColumn {
   @Column()
   value!: string;
 
-  @Column()
+  @Column({ default: false })
   isAnonymous!: boolean;
 
   @Column()
   username!: string;
 
-  @Column()
+  @Column({ select: false })
   password!: string;
 
-  @Column()
-  userId!: string;
+  @Column({ nullable: true, default: null })
+  userId!: string | null;
 
   @ManyToOne(() => User, (user) => user.comments, {
     cascade: true,

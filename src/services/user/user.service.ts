@@ -63,6 +63,7 @@ class UserService extends Repository<User> {
     const { password: userPassword, ...withoutPassword } = user;
 
     const isPasswordCorrect = await bcrypt.compare(password, userPassword);
+
     if (!isPasswordCorrect) {
       throw new Error('비밀번호가 틀립니다.');
     }

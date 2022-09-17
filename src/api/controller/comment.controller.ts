@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 
 import {
   CommentCreateParamsDto,
@@ -10,7 +10,11 @@ import {
   notificationService,
 } from '@services';
 
-export const getComments = async (req: Request, res: Response) => {
+export const getComments = async (
+  req: Request,
+  _: Response,
+  next: NextFunction
+) => {
   const { postId } = req.query;
 
   try {
@@ -18,12 +22,16 @@ export const getComments = async (req: Request, res: Response) => {
 
     const comments = await commentService().getComments(id);
 
-    res.status(200).send({ status: 200, payload: comments });
-  } catch (err: any) {
-    res.status(400).send({ status: 400, message: err.message });
+    next({ status: 200, payload: comments });
+  } catch (err) {
+    next(err);
   }
 };
-export const createComment = async (req: Request, res: Response) => {
+export const createComment = async (
+  req: Request,
+  _: Response,
+  next: NextFunction
+) => {
   const {
     postId,
     value,
@@ -54,12 +62,16 @@ export const createComment = async (req: Request, res: Response) => {
       });
     }
 
-    res.status(201).send({ status: 201, payload: null });
-  } catch (err: any) {
-    res.status(400).send({ status: 400, message: err.message });
+    next({ status: 201, payload: null });
+  } catch (err) {
+    next(err);
   }
 };
-export const updateComment = async (req: Request, res: Response) => {
+export const updateComment = async (
+  req: Request,
+  _: Response,
+  next: NextFunction
+) => {
   const {
     id,
     value,
@@ -79,13 +91,17 @@ export const updateComment = async (req: Request, res: Response) => {
       isAnonymous: !user,
     });
 
-    res.status(200).send({ status: 200, payload: null });
-  } catch (err: any) {
-    res.status(400).send({ status: 400, message: err.message });
+    next({ status: 200, payload: null });
+  } catch (err) {
+    next(err);
   }
 };
 
-export const deleteComment = async (req: Request, res: Response) => {
+export const deleteComment = async (
+  req: Request,
+  _: Response,
+  next: NextFunction
+) => {
   const { id, password } = req.query;
   const userId = req.user?.id;
 
@@ -96,25 +112,33 @@ export const deleteComment = async (req: Request, res: Response) => {
       userId || ''
     );
 
-    res.status(200).send({ status: 200, payload: null });
-  } catch (err: any) {
-    res.status(400).send({ status: 400, message: err.message });
+    next({ status: 200, payload: null });
+  } catch (err) {
+    next(err);
   }
 };
 
-export const getCommentReplies = async (req: Request, res: Response) => {
+export const getCommentReplies = async (
+  req: Request,
+  _: Response,
+  next: NextFunction
+) => {
   const { commentId } = req.body;
 
   try {
     const comment = await commentReplyService().getReplies(commentId);
 
-    res.status(200).send({ status: 200, payload: comment });
-  } catch (err: any) {
-    res.status(400).send({ status: 400, message: err.message });
+    next({ status: 200, payload: comment });
+  } catch (err) {
+    next(err);
   }
 };
 
-export const createCommentReply = async (req: Request, res: Response) => {
+export const createCommentReply = async (
+  req: Request,
+  _: Response,
+  next: NextFunction
+) => {
   const {
     commentId = '',
     postId,
@@ -150,13 +174,17 @@ export const createCommentReply = async (req: Request, res: Response) => {
       });
     }
 
-    res.status(201).send({ status: 201, payload: null });
-  } catch (err: any) {
-    res.status(400).send({ status: 400, message: err.message });
+    next({ status: 201, payload: null });
+  } catch (err) {
+    next(err);
   }
 };
 
-export const updateCommentReply = async (req: Request, res: Response) => {
+export const updateCommentReply = async (
+  req: Request,
+  _: Response,
+  next: NextFunction
+) => {
   const {
     id,
     value,
@@ -176,12 +204,16 @@ export const updateCommentReply = async (req: Request, res: Response) => {
       isAnonymous: !user,
     });
 
-    res.status(200).send({ status: 200, payload: null });
-  } catch (err: any) {
-    res.status(400).send({ status: 400, message: err.message });
+    next({ status: 200, payload: null });
+  } catch (err) {
+    next(err);
   }
 };
-export const deleteCommentReply = async (req: Request, res: Response) => {
+export const deleteCommentReply = async (
+  req: Request,
+  _: Response,
+  next: NextFunction
+) => {
   const { id, password } = req.query;
   const userId = req.user?.id;
 
@@ -192,8 +224,8 @@ export const deleteCommentReply = async (req: Request, res: Response) => {
       userId || ''
     );
 
-    res.status(200).send({ status: 200, payload: null });
-  } catch (err: any) {
-    res.status(400).send({ status: 400, message: err.message });
+    next({ status: 200, payload: null });
+  } catch (err) {
+    next(err);
   }
 };

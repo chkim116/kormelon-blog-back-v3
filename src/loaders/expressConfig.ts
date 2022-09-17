@@ -8,6 +8,8 @@ import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
 
+import { errorHandler, payloadHandler } from '../api/middlewares';
+
 export async function expressConfig(app: Express) {
   // security
   app.use(helmet());
@@ -29,4 +31,6 @@ export async function expressConfig(app: Express) {
 
   // routes
   app.use(env.prefix, routes());
+  app.use(payloadHandler);
+  app.use(errorHandler);
 }

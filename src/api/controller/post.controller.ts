@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 
 import {
   categoryService,
@@ -11,7 +11,11 @@ import {
   tagService,
 } from '@services';
 
-export const getPosts = async (req: Request, res: Response) => {
+export const getPosts = async (
+  req: Request,
+  _: Response,
+  next: NextFunction
+) => {
   const { page = 1, per = 10, keyword = '' } = req.query;
 
   try {
@@ -21,28 +25,34 @@ export const getPosts = async (req: Request, res: Response) => {
       String(keyword)
     );
 
-    res
-      .status(200)
-      .send({ status: 200, payload: posts, meta: { total, page, per } });
-  } catch (err: any) {
-    res.status(400).send({ status: 400, message: err.message });
+    next({ status: 200, payload: posts, meta: { total, page, per } });
+  } catch (err) {
+    next(err);
   }
 };
 
-export const getPostById = async (req: Request, res: Response) => {
+export const getPostById = async (
+  req: Request,
+  _: Response,
+  next: NextFunction
+) => {
   const { id } = req.params;
 
   try {
     const post = await postService().getPostById(Number(id));
     await postService().addPostView(Number(id));
 
-    res.status(200).send({ status: 200, payload: post });
-  } catch (err: any) {
-    res.status(400).send({ status: 400, message: err.message });
+    next({ status: 200, payload: post });
+  } catch (err) {
+    next(err);
   }
 };
 
-export const createPost = async (req: Request, res: Response) => {
+export const createPost = async (
+  req: Request,
+  _: Response,
+  next: NextFunction
+) => {
   const json: PostCreateParamsDto = req.body;
   const userId = req.user?.id as string;
 
@@ -58,13 +68,17 @@ export const createPost = async (req: Request, res: Response) => {
     };
     await postService().createPost(params);
 
-    res.status(201).send({ status: 201, payload: null });
-  } catch (err: any) {
-    res.status(400).send({ status: 400, message: err.message });
+    next({ status: 201, payload: null });
+  } catch (err) {
+    next(err);
   }
 };
 
-export const updatePost = async (req: Request, res: Response) => {
+export const updatePost = async (
+  req: Request,
+  _: Response,
+  next: NextFunction
+) => {
   const json: PostUpdateParamsDto = req.body;
   const userId = req.user?.id as string;
 
@@ -76,26 +90,34 @@ export const updatePost = async (req: Request, res: Response) => {
     const params: PostUpdateParamsEntity = { ...json, tags, userId };
     await postService().updatePost(params);
 
-    res.status(200).send({ status: 200, payload: null });
-  } catch (err: any) {
-    res.status(400).send({ status: 400, message: err.message });
+    next({ status: 200, payload: null });
+  } catch (err) {
+    next(err);
   }
 };
 
-export const deletePost = async (req: Request, res: Response) => {
+export const deletePost = async (
+  req: Request,
+  _: Response,
+  next: NextFunction
+) => {
   const { id } = req.query;
 
   try {
     const postId = Number(id);
 
     await postService().deletePost(postId);
-    res.status(200).send({ status: 200, payload: null });
-  } catch (err: any) {
-    res.status(400).send({ status: 400, message: err.message });
+    next({ status: 200, payload: null });
+  } catch (err) {
+    next(err);
   }
 };
 
-export const likePost = async (req: Request, res: Response) => {
+export const likePost = async (
+  req: Request,
+  _: Response,
+  next: NextFunction
+) => {
   const { id } = req.query;
 
   try {
@@ -103,8 +125,8 @@ export const likePost = async (req: Request, res: Response) => {
 
     await postService().addPostLike(postId);
 
-    res.status(200).send({ status: 200, payload: null });
-  } catch (err: any) {
-    res.status(400).send({ status: 400, message: err.message });
+    next({ status: 200, payload: null });
+  } catch (err) {
+    next(err);
   }
 };

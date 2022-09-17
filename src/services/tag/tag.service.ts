@@ -82,7 +82,7 @@ class TagService extends Repository<Tag> {
 
     try {
       await Promise.all(promises());
-    } catch (err: Error) {
+    } catch (err: any) {
       throw new Error(err.message);
     }
   }

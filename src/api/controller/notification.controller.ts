@@ -21,7 +21,7 @@ export const readNotification = async (req: Request, res: Response) => {
   const userId = req.user?.id;
 
   try {
-    await notificationService().readNotification(id, userId);
+    await notificationService().readNotification(id, userId || '');
 
     res.status(200).send({ status: 200, payload: null });
   } catch (err: any) {

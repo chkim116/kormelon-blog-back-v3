@@ -32,3 +32,20 @@ export const userSignIn = async (
     next(err);
   }
 };
+
+export const uploadUserProfile = async (
+  req: Request,
+  _: Response,
+  next: NextFunction
+) => {
+  const { file } = req;
+  try {
+    if (!file) {
+      throw new Error('이미지 처리 중 오류가 발생했습니다.');
+    }
+
+    next({ status: 200, payload: location });
+  } catch (err) {
+    next(err);
+  }
+};

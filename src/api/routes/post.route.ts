@@ -9,10 +9,12 @@ import {
   getPostById,
   updatePost,
   likePost,
+  uploadPostImage,
 } from '../controller';
 import { validationCheck } from '../middlewares';
 import { adminCheck } from '../middlewares/adminCheck';
 import { authCheck } from '../middlewares/authCheck';
+import { uploadImage } from '../middlewares/uploadImage';
 
 const router = Router();
 
@@ -77,4 +79,6 @@ export const postRouter = (app: Router) => {
     [query('id', 'id가 필요합니다.').exists().isNumeric(), validationCheck],
     likePost
   );
+
+  router.post('/image', uploadImage, uploadPostImage);
 };

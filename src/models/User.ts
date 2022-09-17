@@ -2,6 +2,7 @@ import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 
 import Comment from './Comment';
 import { BaseDateColumn } from './common/BaseDateColumn';
+import Notification from './Notification';
 import Post from './Post';
 
 export enum UserRoleEnum {
@@ -39,6 +40,9 @@ class User extends BaseDateColumn {
 
   @OneToMany(() => Comment, (comment) => comment.user)
   comments!: Comment[];
+
+  @OneToMany(() => Notification, (notification) => notification.user)
+  notifications!: Notification[];
 }
 
 export default User;

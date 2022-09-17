@@ -1,11 +1,11 @@
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
-import { DateColumn } from './common/DateColumn';
+import { BaseDateColumn } from './common/BaseDateColumn';
 
 type UserRoleType = ['admin', 'member'];
 
 @Entity('User')
-class User extends DateColumn {
+class User extends BaseDateColumn {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 

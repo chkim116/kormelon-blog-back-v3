@@ -50,11 +50,7 @@ class SubCategoryService extends Repository<SubCategory> {
    * @param value 수정할 값
    */
   async updateSubCategory(subCategoryId: number, value: string) {
-    const exist = await this.findOne(subCategoryId);
-
-    if (!exist) {
-      throw new Error('존재하지 않는 카테고리입니다.');
-    }
+    await this.exist(subCategoryId);
 
     await this.update(subCategoryId, { value });
   }
@@ -69,12 +65,23 @@ class SubCategoryService extends Repository<SubCategory> {
       throw new Error('유효한 숫자가 아닙니다.');
     }
 
-    const exist = await this.findOne(subCategoryId);
+    await this.exist(subCategoryId);
+    await this.delete(subCategoryId);
+  }
+
+  /**
+   * 하위 카테고리가 있는지 없는지 확인한다.
+   *
+   * @param subCategoryId
+   * @returns
+   */
+  async exist(subCategoryId: number) {
+    const exist = await this.findOne({ where: { id: subCategoryId } });
 
     if (!exist) {
-      throw new Error('존재하지 않는 카테고리입니다.');
+      throw new Error('존재하지 않는 하위 카테고리입니다.');
     }
 
-    await this.delete(subCategoryId);
+    return true;
   }
 }

@@ -4,6 +4,7 @@ import { env } from '@config';
 import { User } from '@models';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import { UserRoleEnum } from 'src/models/User';
 
 import { UserSignInDto, UserSignUpDto } from './user.dto';
 
@@ -70,6 +71,42 @@ class UserService extends Repository<User> {
     const token = jwt.sign({ userId: user.id }, env.secret || 'warning');
 
     return { token, user: withoutPassword };
+  }
+
+  async getAuth(id: string) {
+    const user = await this.createQueryBuilder('user')
+      .where({ id })
+      .leftJoin('user.posts', 'post')
+      .addSelect(['post.id'])
+      .leftJoin('user.comments', 'comment')
+      .addSelect(['comment.id'])
+      .getOne();
+
+    return user;
+  }
+
+  /**
+   * 유저가 어드민인지 확인한다.
+   *
+   * @param id
+   * @returns
+   */
+  async checkAdmin(id?: string) {
+    if (!id) {
+      throw new Error('관리자가 아닙니다.');
+    }
+
+    const user = await this.findOne({ where: { id } });
+
+    if (!user) {
+      throw new Error('유저의 정보가 없습니다.');
+    }
+
+    if (user.role !== ('admin' as UserRoleEnum)) {
+      throw new Error('관리자가 아닙니다.');
+    }
+
+    return user;
   }
 
   private findByEmail(email: string): Promise<User | undefined> {

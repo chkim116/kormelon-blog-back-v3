@@ -4,8 +4,10 @@ import Comment from './Comment';
 import { BaseDateColumn } from './common/BaseDateColumn';
 import Post from './Post';
 
-type UserRoleType = ['admin', 'member'];
-
+export enum UserRoleEnum {
+  ADMIN = 'admin',
+  MEMBER = 'member',
+}
 @Entity('User')
 class User extends BaseDateColumn {
   @PrimaryGeneratedColumn('uuid')
@@ -28,14 +30,14 @@ class User extends BaseDateColumn {
     enum: ['admin', 'member'],
     default: 'member',
   })
-  role!: UserRoleType;
+  role!: UserRoleEnum;
 
-  @OneToMany(() => Post, (post) => post.userId, {
+  @OneToMany(() => Post, (post) => post.user, {
     onDelete: 'CASCADE',
   })
   posts!: Post[];
 
-  @OneToMany(() => Comment, (comment) => comment.userId)
+  @OneToMany(() => Comment, (comment) => comment.user)
   comments!: Comment[];
 }
 

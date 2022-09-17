@@ -41,11 +41,7 @@ class CategoryService extends Repository<Category> {
    * @param value 수정될 값
    */
   async updateCategory(categoryId: number, value: string) {
-    const exist = await this.findOne(categoryId);
-
-    if (!exist) {
-      throw new Error('존재하지 않는 카테고리입니다.');
-    }
+    await this.exist(categoryId);
 
     await this.update(categoryId, { value });
   }
@@ -73,5 +69,21 @@ class CategoryService extends Repository<Category> {
     }
 
     await this.delete(categoryId);
+  }
+
+  /**
+   * 카테고리가 있는지 없는지 확인한다.
+   *
+   * @param categoryId
+   * @returns
+   */
+  async exist(categoryId: number) {
+    const exist = await this.findOne({ where: { id: categoryId } });
+
+    if (!exist) {
+      throw new Error('존재하지 않는 카테고리입니다.');
+    }
+
+    return true;
   }
 }

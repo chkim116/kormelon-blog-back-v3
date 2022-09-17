@@ -31,7 +31,7 @@ export const postRouter = (app: Router) => {
   router.get('/:id', getPostById);
   router.post(
     '/',
-    authCheck,
+    authCheck(),
     adminCheck,
     [
       body('thumbnail', '이미지를 입력해 주세요.').exists(),
@@ -47,7 +47,7 @@ export const postRouter = (app: Router) => {
   );
   router.put(
     '/',
-    authCheck,
+    authCheck(),
     adminCheck,
     [
       body('id', '게시글 id를 입력해 주세요.').exists().isNumeric(),
@@ -64,7 +64,7 @@ export const postRouter = (app: Router) => {
   );
   router.delete(
     '/',
-    authCheck,
+    authCheck(),
     adminCheck,
     [
       query('id', '삭제할 id가 필요합니다.').exists().isNumeric(),

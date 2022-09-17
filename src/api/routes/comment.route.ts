@@ -18,12 +18,12 @@ export const commentRouter = (app: Router) => {
   app.use('/comment', router);
 
   router.get('/', getComments);
-  router.post('/', authCheck, adminCheck, createComment);
-  router.put('/', authCheck, adminCheck, updateComment);
-  router.delete('/', authCheck, adminCheck, deleteComment);
+  router.post('/', authCheck(false), createComment);
+  router.put('/', authCheck(false), updateComment);
+  router.delete('/', authCheck(false), deleteComment);
 
   router.get('/reply', getCommentReplies);
-  router.post('/reply', authCheck, adminCheck, createCommentReply);
-  router.put('/reply', authCheck, adminCheck, updateCommentReply);
-  router.delete('/reply', authCheck, adminCheck, deleteCommentReply);
+  router.post('/reply', authCheck(false), adminCheck, createCommentReply);
+  router.put('/reply', authCheck(false), adminCheck, updateCommentReply);
+  router.delete('/reply', authCheck(false), adminCheck, deleteCommentReply);
 };

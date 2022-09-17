@@ -1,3 +1,5 @@
+import Tag from 'src/models/Tag';
+
 export interface PostCreateParamsDto {
   /**
    * 게시글의 썸네일
@@ -25,16 +27,25 @@ export interface PostCreateParamsDto {
    * 서브 카테고리 아이디
    */
   subCategoryId: number;
+  /**
+   * 태그의 식별자 배열
+   */
+  tags: number[];
 }
 
-export interface PostCreateParamsEntity extends PostCreateParamsDto {
+export interface PostCreateParamsEntity
+  extends Omit<PostCreateParamsDto, 'tags'> {
   /**
    * 유저 아이디
    */
   userId: string;
+  /**
+   * 태그
+   */
+  tags: Tag[];
 }
 
-export interface PostUpdateParamsDto extends PostCreateParamsEntity {
+export interface PostUpdateParamsDto extends PostCreateParamsDto {
   /**
    * 게시글의 아이디
    */
@@ -42,5 +53,5 @@ export interface PostUpdateParamsDto extends PostCreateParamsEntity {
 }
 
 export interface PostUpdateParamsEntity
-  extends PostUpdateParamsDto,
+  extends Omit<PostUpdateParamsDto, 'tags'>,
     PostCreateParamsEntity {}

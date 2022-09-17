@@ -8,7 +8,7 @@ import {
   PostUpdateParamsEntity,
   PostUpdateParamsDto,
   subCategoryService,
-  userService,
+  tagService,
 } from '@services';
 
 export const getPosts = async (req: Request, res: Response) => {
@@ -46,9 +46,11 @@ export const createPost = async (req: Request, res: Response) => {
   try {
     await categoryService().exist(json.categoryId);
     await subCategoryService().exist(json.subCategoryId);
+    const { tags } = await tagService().getTags(json.tags);
 
     const params: PostCreateParamsEntity = {
       ...json,
+      tags,
       userId,
     };
     await postService().createPost(params);
@@ -66,8 +68,9 @@ export const updatePost = async (req: Request, res: Response) => {
   try {
     await categoryService().exist(json.categoryId);
     await subCategoryService().exist(json.subCategoryId);
+    const { tags } = await tagService().getTags(json.tags);
 
-    const params: PostUpdateParamsEntity = { ...json, userId };
+    const params: PostUpdateParamsEntity = { ...json, tags, userId };
     await postService().updatePost(params);
 
     res.status(200).send({ status: 200, payload: null });

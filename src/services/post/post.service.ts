@@ -26,6 +26,7 @@ class PostService extends Repository<Post> {
         'post.createdAt',
         'post.thumbnail',
         'post.view',
+        'post.like',
       ])
       .leftJoin('post.category', 'category')
       .addSelect(['category.id', 'category.value'])
@@ -62,6 +63,7 @@ class PostService extends Repository<Post> {
         'post.content',
         'post.view',
         'post.createdAt',
+        'post.like',
       ])
       .leftJoin('post.category', 'category')
       .addSelect(['category.id', 'category.value'])
@@ -69,6 +71,8 @@ class PostService extends Repository<Post> {
       .addSelect(['subCategory.id', 'subCategory.value'])
       .leftJoin('post.user', 'user')
       .addSelect(['user.id', 'user.username', 'user.profileImage'])
+      .leftJoin('post.tags', 'tag')
+      .addSelect(['tag.id', 'tag.value'])
       .getOne();
 
     return post;
@@ -90,9 +94,9 @@ class PostService extends Repository<Post> {
    * @param param0
    */
   async updatePost({ id, ...params }: PostUpdateParamsEntity) {
-    await this.exist(id);
+    const post = await this.exist(id);
 
-    await this.update(id, params);
+    await this.save({ ...post, ...params });
   }
 
   /**
@@ -122,6 +126,6 @@ class PostService extends Repository<Post> {
       throw new Error('존재하지 않는 게시글입니다.');
     }
 
-    return true;
+    return post;
   }
 }

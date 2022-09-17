@@ -4,6 +4,7 @@ import {
   categoryRouter,
   postRouter,
   subCategoryRouter,
+  tagRouter,
   userRouter,
 } from './routes';
 
@@ -14,6 +15,7 @@ export default () => {
   categoryRouter(app);
   subCategoryRouter(app);
   postRouter(app);
+  tagRouter(app);
 
   return app;
 };

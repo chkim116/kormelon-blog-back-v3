@@ -1,9 +1,33 @@
-import { Repository } from 'typeorm';
+import { EntityRepository, getCustomRepository, Repository } from 'typeorm';
 
+import { env } from '@config';
 import { SubCategory } from '@models';
 
-export class SubCategoryService {
-  constructor(private subCategoryRepository: Repository<SubCategory>) {}
+export function subCategoryService() {
+  return getCustomRepository(SubCategoryService, env.mode);
+}
+
+@EntityRepository(SubCategory)
+class SubCategoryService extends Repository<SubCategory> {
+  /**
+   * 하위 카테고리를 조회한다.
+   *
+   * @returns
+   */
+  async getSubCategories() {
+    const results = await this.createQueryBuilder('subCategory')
+      .select(['subCategory.id', 'subCategory.value', 'subCategory.categoryId'])
+      .leftJoin('subCategory.posts', 'post')
+      .addSelect(['post.id'])
+      .getMany();
+
+    return results
+      ? results.map((subCategory) => ({
+          ...subCategory,
+          posts: subCategory.posts.length,
+        }))
+      : [];
+  }
 
   /**
    * 하위 카테고리를 생성한다.
@@ -11,12 +35,12 @@ export class SubCategoryService {
    * @param categoryId 상위 카테고리 id
    * @param value 생성할 값
    */
-  async create(categoryId: number, value: string) {
-    const subCategory = this.subCategoryRepository.create({
+  async createSubCategory(categoryId: number, value: string) {
+    const subCategory = this.create({
       categoryId,
       value,
     });
-    await this.subCategoryRepository.save(subCategory);
+    await this.save(subCategory);
   }
 
   /**
@@ -25,8 +49,10 @@ export class SubCategoryService {
    * @param subCategoryId 하위 카테고리 id
    * @param value 수정할 값
    */
-  async update(subCategoryId: number, value: string) {
-    await this.subCategoryRepository.update(subCategoryId, { value });
+  async updateSubCategory(subCategoryId: number, value: string) {
+    await this.exist(subCategoryId);
+
+    await this.update(subCategoryId, { value });
   }
 
   /**
@@ -34,7 +60,28 @@ export class SubCategoryService {
 
   * @param subCategoryId 하위 카테고리 id
    */
-  async delete(subCategoryId: number) {
-    await this.subCategoryRepository.delete(subCategoryId);
+  async deleteSubCategory(subCategoryId: number) {
+    if (!isFinite(subCategoryId)) {
+      throw new Error('유효한 숫자가 아닙니다.');
+    }
+
+    await this.exist(subCategoryId);
+    await this.delete(subCategoryId);
+  }
+
+  /**
+   * 하위 카테고리가 있는지 없는지 확인한다.
+   *
+   * @param subCategoryId
+   * @returns
+   */
+  async exist(subCategoryId: number) {
+    const exist = await this.findOne({ where: { id: subCategoryId } });
+
+    if (!exist) {
+      throw new Error('존재하지 않는 하위 카테고리입니다.');
+    }
+
+    return true;
   }
 }

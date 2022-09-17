@@ -1,10 +1,14 @@
 import { json, urlencoded } from 'express';
 import type { Express } from 'express';
 
+import routes from '@api';
+import { env } from '@config';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
+
+import { errorHandler, payloadHandler } from '../api/middlewares';
 
 export async function expressConfig(app: Express) {
   // security
@@ -24,4 +28,9 @@ export async function expressConfig(app: Express) {
   app.use(cookieParser());
   app.use(json());
   app.use(urlencoded({ extended: true }));
+
+  // routes
+  app.use(env.prefix, routes());
+  app.use(payloadHandler);
+  app.use(errorHandler);
 }

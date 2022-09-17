@@ -1,4 +1,10 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 import { BaseDateColumn } from './common/BaseDateColumn';
 import Post from './Post';
@@ -12,7 +18,7 @@ class Category extends BaseDateColumn {
   @Column()
   value!: string;
 
-  @OneToMany(() => SubCategory, (SubCategory) => SubCategory.categoryId, {
+  @OneToMany(() => SubCategory, (SubCategory) => SubCategory.category, {
     onDelete: 'CASCADE',
   })
   subCategories!: SubCategory[];

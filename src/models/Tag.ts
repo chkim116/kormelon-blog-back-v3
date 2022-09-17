@@ -1,11 +1,17 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToMany } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  ManyToMany,
+  JoinTable,
+} from 'typeorm';
 
 import Post from './Post';
 
-@Entity()
-export class Tag {
-  @PrimaryGeneratedColumn('uuid')
-  id!: string;
+@Entity('Tag')
+class Tag {
+  @PrimaryGeneratedColumn()
+  id!: number;
 
   @Column()
   value!: string;
@@ -13,3 +19,5 @@ export class Tag {
   @ManyToMany(() => Post, (post) => post.tags)
   posts!: Post[];
 }
+
+export default Tag;

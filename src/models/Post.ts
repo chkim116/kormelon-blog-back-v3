@@ -13,7 +13,7 @@ import Category from './Category';
 import Comment from './Comment';
 import { BaseDateColumn } from './common/BaseDateColumn';
 import SubCategory from './SubCategory';
-import { Tag } from './Tag';
+import Tag from './Tag';
 import User from './User';
 
 @Entity('Post')
@@ -46,6 +46,9 @@ class Post extends BaseDateColumn {
   @Column()
   userId!: string;
 
+  @Column({ default: 0 })
+  like!: number;
+
   @ManyToOne(() => Category, (category) => category.posts, {
     onDelete: 'CASCADE',
   })
@@ -64,7 +67,7 @@ class Post extends BaseDateColumn {
   @JoinColumn({ name: 'userId' })
   user!: User;
 
-  @OneToMany(() => Comment, (comment) => comment.postId)
+  @OneToMany(() => Comment, (comment) => comment.post)
   comments!: Comment[];
 
   @ManyToMany(() => Tag, (tag) => tag.posts, {

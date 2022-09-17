@@ -19,6 +19,19 @@ export const env = {
    * 쿠키 암호를 위한 값
    */
   secret: process.env.SECRET,
+  /**
+   * 서버 주소 prefix
+   */
+  prefix: '/api',
+
+  /**
+   * AWS secretAccessKey
+   */
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  /**
+   * AWS accessKeyId
+   */
+  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
 
   /**
    * DB host

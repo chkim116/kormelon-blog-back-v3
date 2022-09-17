@@ -1,4 +1,6 @@
-export interface PostCreateParams {
+import Tag from 'src/models/Tag';
+
+export interface PostCreateParamsDto {
   /**
    * 게시글의 썸네일
    */
@@ -12,7 +14,7 @@ export interface PostCreateParams {
    *
    * true라면 어드민 제외 숨겨진다.
    */
-  isPrivate: boolean;
+  isPrivate?: boolean;
   /**
    * 게시글의 컨텐츠
    */
@@ -26,14 +28,30 @@ export interface PostCreateParams {
    */
   subCategoryId: number;
   /**
+   * 태그의 식별자 배열
+   */
+  tags: number[];
+}
+
+export interface PostCreateParamsEntity
+  extends Omit<PostCreateParamsDto, 'tags'> {
+  /**
    * 유저 아이디
    */
   userId: string;
+  /**
+   * 태그
+   */
+  tags: Tag[];
 }
 
-export interface PostUpdateParams extends PostCreateParams {
+export interface PostUpdateParamsDto extends PostCreateParamsDto {
   /**
    * 게시글의 아이디
    */
   id: number;
 }
+
+export interface PostUpdateParamsEntity
+  extends Omit<PostUpdateParamsDto, 'tags'>,
+    PostCreateParamsEntity {}

@@ -25,6 +25,15 @@ export const env = {
   prefix: '/api',
 
   /**
+   * AWS secretAccessKey
+   */
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  /**
+   * AWS accessKeyId
+   */
+  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+
+  /**
    * DB host
    *
    * @example

@@ -2,8 +2,9 @@ import { Router } from 'express';
 
 import { body } from 'express-validator';
 
-import { userSignUp, userSignIn } from '../controller';
+import { userSignUp, userSignIn, uploadUserProfile } from '../controller';
 import { validationCheck } from '../middlewares';
+import { uploadImage } from '../middlewares/uploadImage';
 
 const authRouter = Router();
 
@@ -31,4 +32,6 @@ export const userRouter = (app: Router) => {
     ],
     userSignIn
   );
+
+  authRouter.post('/image', uploadImage, uploadUserProfile);
 };

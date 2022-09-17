@@ -109,6 +109,25 @@ class UserService extends Repository<User> {
     return user;
   }
 
+  /**
+   * 유저가 있는지 확인한다.
+   *
+   * @param id
+   */
+  async exist(id?: string) {
+    if (!id) {
+      throw new Error('로그인이 필요합니다.');
+    }
+
+    const exist = await this.findOne({ where: { id } });
+
+    if (!exist) {
+      throw new Error('유저의 정보가 없습니다.');
+    }
+
+    return exist;
+  }
+
   private findByEmail(email: string): Promise<User | undefined> {
     return this.findOne({
       where: { email },

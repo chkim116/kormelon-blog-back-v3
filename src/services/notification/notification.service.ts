@@ -17,11 +17,20 @@ class NotificationService extends Repository<Notification> {
    * @returns
    */
   async getNotifications(userId: string) {
-    const notifications = await this.find({
-      where: { userId },
-      order: { id: 'DESC' },
-      select: ['id', 'postId', 'commentId', 'message', 'isRead', 'createdAt'],
-    });
+    const notifications = await this.createQueryBuilder('notification')
+      .where({
+        userId,
+      })
+      .andWhere({ isRead: false })
+      .select([
+        'notification.id',
+        'notification.postId',
+        'notification.commentId',
+        'notification.isRead',
+        'notification.createdAt',
+      ])
+      .orderBy({ id: 'DESC' })
+      .getMany();
 
     return notifications;
   }
@@ -45,7 +54,9 @@ class NotificationService extends Repository<Notification> {
    *
    * @param id
    */
-  async readNotification(id: number) {
+  async readNotification(id: number, userId: string) {
+    await this.check(id, userId);
+
     const notification = await this.exist(id);
 
     await this.update(id, { ...notification, isRead: true });
@@ -65,5 +76,24 @@ class NotificationService extends Repository<Notification> {
     }
 
     return exist;
+  }
+
+  /**
+   * 지우는 알림이 해당 유저의 것인지 확인한다.
+   *
+   * @param id
+   * @returns
+   */
+  private async check(id: number, userId: string) {
+    const exist = await this.createQueryBuilder()
+      .where({ id })
+      .andWhere({ userId })
+      .getCount();
+
+    if (!exist) {
+      throw new Error('해당 유저의 알림이 아닙니다.');
+    }
+
+    return Boolean(exist);
   }
 }

@@ -5,6 +5,7 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import type { Relation } from 'typeorm';
 
 import { BaseDateColumn } from './common/BaseDateColumn';
 import User from './User';
@@ -20,9 +21,6 @@ class Notification extends BaseDateColumn {
   @Column()
   commentId!: string;
 
-  @Column()
-  message!: string;
-
   @Column({ default: false })
   isRead!: boolean;
 
@@ -33,7 +31,7 @@ class Notification extends BaseDateColumn {
     cascade: true,
   })
   @JoinColumn({ name: 'userId' })
-  user!: User;
+  user!: Relation<User>;
 }
 
 export default Notification;

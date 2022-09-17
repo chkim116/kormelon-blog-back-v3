@@ -165,4 +165,20 @@ class PostService extends Repository<Post> {
 
     return post;
   }
+
+  /**
+   * 현재 유저가 특정 게시글의 작성자인지 확인한다.
+   *
+   * @param postId
+   * @param userId
+   * @returns
+   */
+  async checkAuthor(postId: number, userId: string) {
+    const exist = await this.createQueryBuilder('post')
+      .where({ id: postId })
+      .andWhere({ userId })
+      .getCount();
+
+    return Boolean(exist);
+  }
 }

@@ -10,7 +10,7 @@ import {
   deleteCommentReply,
   updateCommentReply,
 } from '../controller';
-import { adminCheck, authCheck } from '../middlewares';
+import { authCheck } from '../middlewares';
 
 const router = Router();
 
@@ -23,7 +23,7 @@ export const commentRouter = (app: Router) => {
   router.delete('/', authCheck(false), deleteComment);
 
   router.get('/reply', getCommentReplies);
-  router.post('/reply', authCheck(false), adminCheck, createCommentReply);
-  router.put('/reply', authCheck(false), adminCheck, updateCommentReply);
-  router.delete('/reply', authCheck(false), adminCheck, deleteCommentReply);
+  router.post('/reply', authCheck(false), createCommentReply);
+  router.put('/reply', authCheck(false), updateCommentReply);
+  router.delete('/reply', authCheck(false), deleteCommentReply);
 };

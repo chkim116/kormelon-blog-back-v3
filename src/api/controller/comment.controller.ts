@@ -6,6 +6,8 @@ import {
   commentReplyService,
   commentService,
   CommentUpdateParamsDto,
+  postService,
+  notificationService,
 } from '@services';
 
 export const getComments = async (req: Request, res: Response) => {
@@ -31,7 +33,7 @@ export const createComment = async (req: Request, res: Response) => {
   const user = req.user;
 
   try {
-    await commentService().createComment({
+    const newComment = await commentService().createComment({
       postId,
       value,
       userId: user?.id || null,
@@ -39,6 +41,18 @@ export const createComment = async (req: Request, res: Response) => {
       password: user?.password || password,
       isAnonymous: !user,
     });
+
+    const isAuthor = await postService().checkAuthor(postId, user?.id || '');
+
+    if (!isAuthor) {
+      const { id, userId, title } = await postService().exist(postId);
+
+      await notificationService().createNotification({
+        commentId: newComment.id,
+        userId,
+        postId: id,
+      });
+    }
 
     res.status(201).send({ status: 201, payload: null });
   } catch (err: any) {
@@ -111,7 +125,7 @@ export const createCommentReply = async (req: Request, res: Response) => {
   const user = req.user;
 
   try {
-    await commentService().exist(commentId);
+    const comment = await commentService().exist(commentId);
 
     await commentReplyService().createReply({
       postId,
@@ -122,6 +136,20 @@ export const createCommentReply = async (req: Request, res: Response) => {
       isAnonymous: !user,
       commentId,
     });
+
+    const isAuthor = await commentService().checkAuthor(
+      commentId,
+      user?.id || ''
+    );
+
+    if (!isAuthor) {
+      await notificationService().createNotification({
+        commentId: comment.id,
+        userId: comment.userId,
+        postId,
+      });
+    }
+
     res.status(201).send({ status: 201, payload: null });
   } catch (err: any) {
     res.status(400).send({ status: 400, message: err.message });

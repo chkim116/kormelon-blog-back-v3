@@ -31,7 +31,7 @@ class Comment extends BaseDateColumn {
   @Column({ select: false })
   password!: string;
 
-  @Column({ nullable: true, default: true })
+  @Column({ nullable: true, default: null })
   userId!: string | null;
 
   @ManyToOne(() => User, (user) => user.comments, {

@@ -9,6 +9,7 @@ import bcrypt from 'bcrypt';
 import {
   CommentCreateParamsDto,
   CommentCreateParamsEntity,
+  CommentReplyCreateParamsEntity,
   CommentUpdateParamsEntity,
 } from './comment.dto';
 
@@ -151,7 +152,7 @@ class CommentService extends Repository<Comment> {
   async exist(id: string) {
     const exist = await this.findOne({
       where: { id },
-      select: ['isAnonymous', 'password', 'username', 'userId'],
+      select: ['isAnonymous', 'password', 'username', 'userId', 'id'],
     });
 
     if (!exist) {
@@ -164,20 +165,134 @@ class CommentService extends Repository<Comment> {
 
 @EntityRepository(CommentReply)
 class CommentReplyService extends Repository<CommentReply> {
-  async createReply(id: string, params: CommentCreateParamsDto) {
-    const commentReply = await this.create({
+  /**
+   * 댓글의 하위 댓글을 가져온다.
+   *
+   * @param commentId
+   * @returns
+   */
+  async getReplies(commentId: string) {
+    const comments = await this.createQueryBuilder('reply')
+      .where('reply.commentId = :commentId', { commentId })
+      .select([
+        'reply.id',
+        'reply.value',
+        'reply.username',
+        'reply.userId',
+        'reply.isAnonymous',
+        'reply.createdAt',
+        'reply.deletedAt',
+      ])
+      .getMany();
+
+    return comments;
+  }
+
+  /**
+   * 대댓글 생성
+   *
+   * @param params
+   */
+  async createReply(params: CommentReplyCreateParamsEntity) {
+    const salt = await bcrypt.genSalt(5);
+    const hashPassword = await bcrypt.hash(params.password, salt);
+
+    const reply = await this.create({
       ...params,
-      commentId: id,
+      password: hashPassword,
     });
 
-    await this.save(commentReply);
+    await this.save(reply);
   }
 
-  async updateReply({ id, ...params }: CommentUpdateParamsEntity) {
-    await this.update(id, params);
+  /**
+   * 대댓글 수정
+   *
+   * 댓글 수정 로직과 흡사하다.
+   *
+   * @param param0
+   * @returns
+   */
+  async updateReply({
+    id,
+    ...params
+  }: Omit<CommentUpdateParamsEntity, 'postId'>) {
+    const reply = await this.exist(id);
+
+    if (reply.isAnonymous) {
+      const isPasswordCorrect = await bcrypt.compare(
+        params.password || '',
+        reply.password
+      );
+
+      if (!isPasswordCorrect) {
+        throw new Error('비밀번호가 틀립니다.');
+      }
+
+      params.password = reply.password;
+
+      await this.update(id, { ...reply, ...params });
+      return;
+    }
+
+    if (reply.userId !== params.userId) {
+      throw new Error('댓글을 작성한 유저가 아닙니다.');
+    }
+
+    params.password = reply.password;
+
+    await this.update(id, { ...reply, ...params });
+    return;
   }
 
-  async deleteReply(id: string) {
+  /**
+   * 대댓글 삭제
+   *
+   * @param id
+   * @param password
+   * @param userId
+   * @returns
+   */
+  async deleteReply(id: string, password: string, userId: string) {
+    const reply = await this.exist(id);
+
+    if (reply.isAnonymous) {
+      const isPasswordCorrect = await bcrypt.compare(
+        password || '',
+        reply.password
+      );
+
+      if (!isPasswordCorrect) {
+        throw new Error('비밀번호가 틀립니다.');
+      }
+
+      await this.delete(id);
+      return;
+    }
+
+    if (reply.userId !== userId) {
+      throw new Error('댓글을 작성한 유저가 아닙니다.');
+    }
+
     await this.delete(id);
+  }
+
+  /**
+   * 대댓글이 존재하는지 확인한다.
+   *
+   * @param id
+   * @returns
+   */
+  async exist(id: string) {
+    const exist = await this.findOne({
+      where: { id },
+      select: ['isAnonymous', 'password', 'username', 'userId', 'id'],
+    });
+
+    if (!exist) {
+      throw new Error('존재하지 않는 댓글입니다.');
+    }
+
+    return exist;
   }
 }

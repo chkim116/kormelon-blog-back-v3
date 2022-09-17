@@ -1,3 +1,5 @@
+import { Comment } from '@models';
+
 export interface CommentCreateParamsDto {
   /**
    * 댓글 텍스트
@@ -20,6 +22,12 @@ export interface CommentCreateParamsDto {
   password?: string;
 }
 
+export interface CommentReplyCreateParamsDto extends CommentCreateParamsDto {
+  /**
+   * 하위 댓글 생성 시 필요한 상위 댓글 식별자.
+   */
+  commentId?: string;
+}
 export interface CommentCreateParamsEntity
   extends Required<CommentCreateParamsDto> {
   /**
@@ -32,14 +40,24 @@ export interface CommentCreateParamsEntity
   isAnonymous?: boolean;
 }
 
-export interface CommentUpdateParamsDto extends CommentCreateParamsDto {
+export interface CommentReplyCreateParamsEntity
+  extends CommentCreateParamsEntity {
+  /**
+   * 상위 코멘트의 식별자
+   */
+  commentId: string;
+}
+
+export interface CommentUpdateParamsDto
+  extends Omit<CommentCreateParamsDto, 'postId'> {
   /**
    * 코멘트의 식별자
    */
   id: string;
 }
 
-export interface CommentUpdateParamsEntity extends CommentCreateParamsEntity {
+export interface CommentUpdateParamsEntity
+  extends Omit<CommentCreateParamsEntity, 'postId'> {
   /**
    * 코멘트의 식별자
    */

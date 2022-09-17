@@ -1,4 +1,9 @@
-import { EntityRepository, getCustomRepository, Repository } from 'typeorm';
+import {
+  EntityRepository,
+  getCustomRepository,
+  Like,
+  Repository,
+} from 'typeorm';
 
 import { env } from '@config';
 import { Post } from '@models';
@@ -16,10 +21,13 @@ class PostService extends Repository<Post> {
    *
    * @param page 페이지 단위
    * @param per 페이지 당 게시글 수
+   * @params keyword 페이지 제목
    * @returns
    */
-  async getPosts(page: number, per: number) {
-    const posts = await this.createQueryBuilder('post')
+  async getPosts(page: number, per: number, keyword: string) {
+    const [posts, total] = await this.createQueryBuilder('post')
+      .where({ title: Like(`%${keyword}%`) })
+      .orWhere({ content: Like(`%${keyword}%`) })
       .select([
         'post.title',
         'post.id',
@@ -34,11 +42,10 @@ class PostService extends Repository<Post> {
       .addSelect(['subCategory.id', 'subCategory.value'])
       .leftJoin('post.comments', 'comment')
       .addSelect(['comment.id'])
+      .orderBy({ 'post.id': 'DESC' })
       .skip((page - 1) * per)
       .take(per)
-      .getMany();
-
-    const total = await this.count();
+      .getManyAndCount();
 
     return {
       total,
@@ -111,6 +118,36 @@ class PostService extends Repository<Post> {
     await this.exist(id);
 
     await this.delete(id);
+  }
+
+  /**
+   * 게시글 좋아요
+   *
+   * @param id
+   */
+  async addPostLike(id: number) {
+    if (!isFinite(id)) {
+      throw new Error('유효한 숫자가 아닙니다.');
+    }
+
+    const { like } = await this.exist(id);
+
+    await this.update(id, { like: like + 1 });
+  }
+
+  /**
+   * 게시글 조회수 증가
+   *
+   * @param id
+   */
+  async addPostView(id: number) {
+    if (!isFinite(id)) {
+      throw new Error('유효한 숫자가 아닙니다.');
+    }
+
+    const { view } = await this.exist(id);
+
+    await this.update(id, { view: view + 1 });
   }
 
   /**

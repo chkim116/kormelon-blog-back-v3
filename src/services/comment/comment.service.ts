@@ -1,7 +1,5 @@
 import { EntityRepository, getCustomRepository, Repository } from 'typeorm';
 
-import { randomUUID } from 'crypto';
-
 import { env } from '@config';
 import { Comment, CommentReply } from '@models';
 import bcrypt from 'bcrypt';
@@ -47,6 +45,7 @@ class CommentService extends Repository<Comment> {
         'comment.createdAt',
         'comment.deletedAt',
       ])
+      .withDeleted()
       .leftJoin('comment.commentReplies', 'reply')
       .addSelect(['reply.id'])
       .getMany();
@@ -66,7 +65,7 @@ class CommentService extends Repository<Comment> {
       password: hashPassword,
     });
 
-    await this.save(comment);
+    return await this.save(comment);
   }
 
   /**
@@ -160,6 +159,22 @@ class CommentService extends Repository<Comment> {
     }
 
     return exist;
+  }
+
+  /**
+   * 현재 유저가 특정 댓글의 작성자인지 확인한다.
+   *
+   * @param commentId
+   * @param userId
+   * @returns
+   */
+  async checkAuthor(commentId: string, userId: string) {
+    const exist = await this.createQueryBuilder('comment')
+      .where({ id: commentId })
+      .andWhere({ userId })
+      .getCount();
+
+    return Boolean(exist);
   }
 }
 

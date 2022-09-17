@@ -2,12 +2,13 @@ import { Router } from 'express';
 
 import {
   categoryRouter,
+  notificationRouter,
   postRouter,
   subCategoryRouter,
   tagRouter,
   userRouter,
+  commentRouter,
 } from './routes';
-import { commentRouter } from './routes/comment.route';
 
 export default () => {
   const app = Router();
@@ -18,6 +19,7 @@ export default () => {
   postRouter(app);
   tagRouter(app);
   commentRouter(app);
+  notificationRouter(app);
 
   return app;
 };

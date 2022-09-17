@@ -1,41 +1,57 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 
 import { categoryService } from '@services';
 
-export const getCategories = async (req: Request, res: Response) => {
+export const getCategories = async (
+  _: Request,
+  __: Response,
+  next: NextFunction
+) => {
   try {
     const categories = await categoryService().getCategories();
 
-    res.status(200).send({ status: 200, payload: categories });
-  } catch (err: any) {
-    res.status(400).send({ status: 400, message: err.message });
+    next({ status: 200, payload: categories });
+  } catch (err) {
+    next(err);
   }
 };
 
-export const createCategory = async (req: Request, res: Response) => {
+export const createCategory = async (
+  req: Request,
+  _: Response,
+  next: NextFunction
+) => {
   const { value } = req.body;
 
   try {
     await categoryService().createCategory(value);
 
-    res.status(200).send({ status: 200, payload: null });
-  } catch (err: any) {
-    res.status(400).send({ status: 400, message: err.message });
+    next({ status: 200, payload: null });
+  } catch (err) {
+    next(err);
   }
 };
 
-export const updateCategory = async (req: Request, res: Response) => {
+export const updateCategory = async (
+  req: Request,
+  _: Response,
+  next: NextFunction
+) => {
   const { value, categoryId } = req.body;
   try {
     await categoryService().updateCategory(categoryId, value);
 
-    res.status(200).send({ status: 200, payload: null });
-  } catch (err: any) {
-    res.status(400).send({ status: 400, message: err.message });
+    next({ status: 200, payload: null });
+  } catch (err) {
+    next(err);
   }
 };
 
-export const deleteCategory = async (req: Request, res: Response) => {
+export const deleteCategory = async (
+  req: Request,
+  _: Response,
+  next: NextFunction
+) => {
   const { id } = req.query;
 
   try {
@@ -43,8 +59,8 @@ export const deleteCategory = async (req: Request, res: Response) => {
 
     await categoryService().deleteCategory(categoryId);
 
-    res.status(200).send({ status: 200, payload: null });
-  } catch (err: any) {
-    res.status(400).send({ status: 400, message: err.message });
+    next({ status: 200, payload: null });
+  } catch (err) {
+    next(err);
   }
 };

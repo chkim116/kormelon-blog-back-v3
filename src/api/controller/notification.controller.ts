@@ -1,8 +1,12 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 
 import { userService, notificationService } from '@services';
 
-export const getNotifications = async (req: Request, res: Response) => {
+export const getNotifications = async (
+  req: Request,
+  _: Response,
+  next: NextFunction
+) => {
   const userId = req.user?.id;
 
   try {
@@ -10,21 +14,25 @@ export const getNotifications = async (req: Request, res: Response) => {
 
     const notifications = await notificationService().getNotifications(user.id);
 
-    res.status(200).send({ status: 200, payload: notifications });
-  } catch (err: any) {
-    res.status(400).send({ status: 400, message: err.message });
+    next({ status: 200, payload: notifications });
+  } catch (err) {
+    next(err);
   }
 };
 
-export const readNotification = async (req: Request, res: Response) => {
+export const readNotification = async (
+  req: Request,
+  _: Response,
+  next: NextFunction
+) => {
   const { id } = req.body;
   const userId = req.user?.id;
 
   try {
     await notificationService().readNotification(id, userId || '');
 
-    res.status(200).send({ status: 200, payload: null });
-  } catch (err: any) {
-    res.status(400).send({ status: 400, message: err.message });
+    next({ status: 200, payload: null });
+  } catch (err) {
+    next(err);
   }
 };

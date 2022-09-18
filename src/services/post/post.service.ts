@@ -82,7 +82,20 @@ class PostService extends Repository<Post> {
       .addSelect(['tag.id', 'tag.value'])
       .getOne();
 
-    return post;
+    const [next = null, prev = null] = await Promise.all([
+      await this.createQueryBuilder('post')
+        .where('post.id > :id', { id })
+        .select(['post.id', 'post.title', 'post.thumbnail', 'post.createdAt'])
+        .limit(1)
+        .getOne(),
+      await this.createQueryBuilder('post')
+        .where('post.id < :id', { id })
+        .select(['post.id', 'post.title', 'post.thumbnail', 'post.createdAt'])
+        .limit(1)
+        .getOne(),
+    ]);
+
+    return { post, next, prev };
   }
 
   /**

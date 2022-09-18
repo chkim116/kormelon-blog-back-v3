@@ -41,9 +41,9 @@ npm install && npm run start
 
 서버에서 유저와 상호작용을 담당하는 폴더입니다.
 
-하위 폴더에는 `controller`, `middlewares`, 'routes`가 있습니다.
+하위 폴더에는 `controller`, `middlewares`, `routes`가 있습니다.
 
-1. config
+2. config
 
 서버에서 사용하는 환경 변수에 대한 세팅 폴더입니다.
 

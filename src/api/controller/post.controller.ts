@@ -9,6 +9,7 @@ import {
   PostUpdateParamsDto,
   subCategoryService,
   tagService,
+  PostOrderDto,
 } from '@services';
 
 export const getPosts = async (
@@ -26,6 +27,25 @@ export const getPosts = async (
     );
 
     next({ status: 200, payload: posts, meta: { total, page, per } });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const getRecommendPosts = async (
+  req: Request,
+  _: Response,
+  next: NextFunction
+) => {
+  const { limit = 3, order = 'like' } = req.query;
+
+  try {
+    const posts = await postService().getRecommendPosts(
+      Number(limit),
+      order as PostOrderDto
+    );
+
+    next({ status: 200, payload: posts });
   } catch (err) {
     next(err);
   }

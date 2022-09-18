@@ -8,7 +8,11 @@ import {
 import { env } from '@config';
 import { Post } from '@models';
 
-import { PostCreateParamsEntity, PostUpdateParamsEntity } from './post.dto';
+import {
+  PostCreateParamsEntity,
+  PostOrderDto,
+  PostUpdateParamsEntity,
+} from './post.dto';
 
 export function postService() {
   return getCustomRepository(PostService, env.mode);
@@ -21,7 +25,7 @@ class PostService extends Repository<Post> {
    *
    * @param page 페이지 단위
    * @param per 페이지 당 게시글 수
-   * @params keyword 페이지 제목
+   * @params keyword 페이지 제목과 컨텐츠
    * @returns
    */
   async getPosts(page: number, per: number, keyword: string) {
@@ -51,6 +55,23 @@ class PostService extends Repository<Post> {
       total,
       posts,
     };
+  }
+
+  /**
+   * 추천 게시글을 조회한다.
+   *
+   * @param limit 조회할 개수
+   * @param order 조회 기준점. like or view
+   * @returns
+   */
+  async getRecommendPosts(limit = 3, order: PostOrderDto) {
+    const posts = await this.createQueryBuilder('post')
+      .orderBy({ [order]: 'ASC' })
+      .limit(limit)
+      .select(['post.id', 'post.title', 'post.thumbnail', 'post.createdAt'])
+      .getMany();
+
+    return posts;
   }
 
   /**

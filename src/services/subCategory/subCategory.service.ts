@@ -51,7 +51,6 @@ class SubCategoryService extends Repository<SubCategory> {
    */
   async updateSubCategory(subCategoryId: number, value: string) {
     await this.exist(subCategoryId);
-
     await this.update(subCategoryId, { value });
   }
 
@@ -65,7 +64,12 @@ class SubCategoryService extends Repository<SubCategory> {
       throw new Error('유효한 숫자가 아닙니다.');
     }
 
-    await this.exist(subCategoryId);
+    const subCategory = await this.exist(subCategoryId);
+
+    if (subCategory.posts.length) {
+      throw new Error('해당 카테고리로 작성된 게시글을 삭제해 주세요.');
+    }
+
     await this.delete(subCategoryId);
   }
 
@@ -75,13 +79,18 @@ class SubCategoryService extends Repository<SubCategory> {
    * @param subCategoryId
    * @returns
    */
-  async exist(subCategoryId: number) {
-    const exist = await this.findOne({ where: { id: subCategoryId } });
+  async exist(subCategoryId: number): Promise<SubCategory> {
+    const exist = await this.createQueryBuilder('subCategory')
+      .where('subCategory.id = :id', { id: subCategoryId })
+      .select(['subCategory.id'])
+      .leftJoin('subCategory.posts', 'post')
+      .addSelect(['post.id'])
+      .getOne();
 
     if (!exist) {
       throw new Error('존재하지 않는 하위 카테고리입니다.');
     }
 
-    return true;
+    return exist;
   }
 }

@@ -27,11 +27,24 @@ export const postRouter = (app: Router) => {
     [
       query('page', '페이지 단위는 숫자여야 합니다.').optional().isNumeric(),
       query('per', '게시글 개수는 숫자여야 합니다.').optional().isNumeric(),
+      query('subCategoryId', '카테고리의 식별자는 숫자여야 합니다.')
+        .optional()
+        .isNumeric(),
       validationCheck,
     ],
     getPosts
   );
-  router.get('/recommend', getRecommendPosts);
+  router.get(
+    '/recommend',
+    [
+      query('take', 'take는 숫자여야 합니다.').optional().isNumeric(),
+      query('order', 'order는 like 또는 view여야 합니다.')
+        .optional()
+        .isIn(['like', 'view']),
+      validationCheck,
+    ],
+    getRecommendPosts
+  );
   router.get('/:id', getPostById);
   router.post(
     '/',
@@ -39,6 +52,7 @@ export const postRouter = (app: Router) => {
     adminCheck,
     [
       body('thumbnail', '이미지를 입력해 주세요.').exists(),
+      body('preview', '미리보기 내용을 입력해 주세요.').exists(),
       body('title', '제목을 입력해 주세요.').exists(),
       body('content', '본문을 입력해 주세요.').exists(),
       body('categoryId', '카테고리를 선택해 주세요.').exists().isNumeric(),

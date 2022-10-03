@@ -7,13 +7,13 @@ export function categoryService() {
   return getCustomRepository(CategoryService, env.mode);
 }
 
-// TODO: 관리자만 가능하도록 middleware 추가
 @EntityRepository(Category)
 class CategoryService extends Repository<Category> {
   async getCategories() {
-    return this.createQueryBuilder('category')
+    return await this.createQueryBuilder('category')
       .select(['category.id', 'category.value'])
       .leftJoin('category.subCategories', 'subCategory')
+      .orderBy('subCategory.value', 'ASC')
       .addSelect([
         'subCategory.id',
         'subCategory.value',

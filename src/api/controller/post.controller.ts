@@ -17,16 +17,21 @@ export const getPosts = async (
   _: Response,
   next: NextFunction
 ) => {
-  const { page = 1, per = 10, keyword = '' } = req.query;
+  const { page = 1, per = 10, keyword = '', subCategoryId } = req.query;
 
   try {
     const { posts, total } = await postService().getPosts(
       Number(page),
       Number(per),
-      String(keyword)
+      String(keyword),
+      subCategoryId ? Number(subCategoryId) : undefined
     );
 
-    next({ status: 200, payload: posts, meta: { total, page, per } });
+    next({
+      status: 200,
+      payload: posts,
+      meta: { total, page: Number(page), per: Number(per) },
+    });
   } catch (err) {
     next(err);
   }
@@ -37,12 +42,12 @@ export const getRecommendPosts = async (
   _: Response,
   next: NextFunction
 ) => {
-  const { limit = 3, order = 'like' } = req.query;
+  const { take = 3, order = 'like' } = req.query;
 
   try {
     const posts = await postService().getRecommendPosts(
-      Number(limit),
-      order as PostOrderDto
+      Number(take),
+      String(order) as PostOrderDto
     );
 
     next({ status: 200, payload: posts });

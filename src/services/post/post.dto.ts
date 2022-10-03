@@ -12,6 +12,10 @@ export interface PostCreateParamsDto {
    */
   title: string;
   /**
+   * 게시글의 간략한 내용
+   */
+  preview: string;
+  /**
    * 비밀 여부 정보
    *
    * true라면 어드민 제외 숨겨진다.

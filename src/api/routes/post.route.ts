@@ -11,6 +11,7 @@ import {
   likePost,
   uploadPostImage,
   getRecommendPosts,
+  addPostView,
 } from '../controller';
 import { validationCheck } from '../middlewares';
 import { adminCheck } from '../middlewares/adminCheck';
@@ -46,6 +47,7 @@ export const postRouter = (app: Router) => {
     getRecommendPosts
   );
   router.get('/:id', getPostById);
+  router.put('/:id', authCheck(), addPostView);
   router.post(
     '/',
     authCheck(),

@@ -56,6 +56,27 @@ export const getRecommendPosts = async (
   }
 };
 
+export const addPostView = async (
+  req: Request,
+  _: Response,
+  next: NextFunction
+) => {
+  const { id } = req.params;
+  const isAdmin = req.user?.role;
+
+  try {
+    if (isAdmin) {
+      return;
+    }
+
+    await postService().addPostView(Number(id));
+
+    next({ status: 200, payload: null });
+  } catch (err) {
+    next(err);
+  }
+};
+
 export const getPostById = async (
   req: Request,
   _: Response,
@@ -65,7 +86,6 @@ export const getPostById = async (
 
   try {
     const post = await postService().getPostById(Number(id));
-    await postService().addPostView(Number(id));
 
     next({ status: 200, payload: post });
   } catch (err) {

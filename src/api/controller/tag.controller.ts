@@ -12,6 +12,22 @@ export const getTags = async (_: Request, __: Response, next: NextFunction) => {
   }
 };
 
+export const getTagsByValue = async (
+  req: Request,
+  __: Response,
+  next: NextFunction
+) => {
+  const { value } = req.params;
+
+  try {
+    const { tags, total } = await tagService().getTagsByValue(value);
+
+    next({ status: 200, payload: tags, meta: { total } });
+  } catch (err) {
+    next(err);
+  }
+};
+
 export const getTagById = async (
   req: Request,
   _: Response,
@@ -34,12 +50,12 @@ export const createTags = async (
   _: Response,
   next: NextFunction
 ) => {
-  const { values }: TagCreateParamsEntity = req.body;
+  const { value }: TagCreateParamsEntity = req.body;
 
   try {
-    await tagService().createTags({ values });
+    const tag = await tagService().createTags({ value });
 
-    next({ status: 201, payload: null });
+    next({ status: 201, payload: tag });
   } catch (err) {
     next(err);
   }

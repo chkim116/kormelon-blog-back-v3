@@ -137,7 +137,7 @@ class PostService extends Repository<Post> {
   async createPost(params: PostCreateParamsEntity) {
     const post = await this.create({
       ...params,
-      readTime: readingTime(params.content, { wordsPerMinute: 500 }).minutes,
+      readTime: readingTime(params.content, { wordsPerMinute: 300 }).minutes,
     });
 
     await this.save(post);

@@ -46,6 +46,7 @@ class PostService extends Repository<Post> {
     }
 
     const [posts, total] = await searchedPosts
+      .where({ isPrivate: false })
       .select([
         'post.title',
         'post.id',
@@ -66,6 +67,28 @@ class PostService extends Repository<Post> {
   }
 
   /**
+   * 비밀 유지 중인 게시글을 조회한다.
+   *
+   * @returns
+   */
+  async getPrivatePosts() {
+    const posts = await this.createQueryBuilder('post')
+      .where('post.isPrivate = :isPrivate', { isPrivate: true })
+      .select([
+        'post.id',
+        'post.title',
+        'post.thumbnail',
+        'post.preview',
+        'post.createdAt',
+        'post.readTime',
+      ])
+      .orderBy({ 'post.id': 'ASC' })
+      .getMany();
+
+    return posts;
+  }
+
+  /**
    * 추천 게시글을 조회한다.
    *
    * @param take 조회할 개수
@@ -83,15 +106,16 @@ class PostService extends Repository<Post> {
   }
 
   /**
-   * 게시글 상세 조회
+   * 비밀 유지 중인 게시글을 상세 조회한다.
    *
    * @param id
    */
-  async getPostById(id: number) {
-    await this.exist(id);
+  async getPrivatePostById(id: number) {
+    await this.privateExist(id);
 
     const post = await this.createQueryBuilder('post')
       .where({ id })
+      .andWhere({ isPrivate: true })
       .select([
         'post.id',
         'post.title',
@@ -102,6 +126,43 @@ class PostService extends Repository<Post> {
         'post.view',
         'post.createdAt',
         'post.like',
+        'post.isPrivate',
+      ])
+      .leftJoin('post.category', 'category')
+      .addSelect(['category.id', 'category.value'])
+      .leftJoin('post.subCategory', 'subCategory')
+      .addSelect(['subCategory.id', 'subCategory.value'])
+      .leftJoin('post.user', 'user')
+      .addSelect(['user.id', 'user.username', 'user.profileImage'])
+      .leftJoin('post.tags', 'tag')
+      .addSelect(['tag.id', 'tag.value'])
+      .getOne();
+
+    return { post, next: null, prev: null };
+  }
+
+  /**
+   * 게시글 상세 조회
+   *
+   * @param id
+   */
+  async getPostById(id: number) {
+    await this.exist(id);
+
+    const post = await this.createQueryBuilder('post')
+      .where({ id })
+      .andWhere({ isPrivate: false })
+      .select([
+        'post.id',
+        'post.title',
+        'post.preview',
+        'post.readTime',
+        'post.thumbnail',
+        'post.content',
+        'post.view',
+        'post.createdAt',
+        'post.like',
+        'post.isPrivate',
       ])
       .leftJoin('post.category', 'category')
       .addSelect(['category.id', 'category.value'])
@@ -206,6 +267,24 @@ class PostService extends Repository<Post> {
    */
   async exist(id: number) {
     const post = await this.findOne({ where: { id } });
+
+    if (!post) {
+      throw new Error('존재하지 않는 게시글입니다.');
+    }
+
+    return post;
+  }
+
+  /**
+   * 비밀 게시글이 존재하는지 확인한다.
+   *
+   * @param id
+   * @returns
+   */
+  async privateExist(id: number) {
+    const post = await this.createQueryBuilder('post')
+      .where({ isPrivate: true })
+      .andWhere({ id });
 
     if (!post) {
       throw new Error('존재하지 않는 게시글입니다.');

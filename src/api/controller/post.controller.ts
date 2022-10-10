@@ -56,6 +56,24 @@ export const getRecommendPosts = async (
   }
 };
 
+export const getPrivatePosts = async (
+  _: Request,
+  __: Response,
+  next: NextFunction
+) => {
+  try {
+    const posts = await postService().getPrivatePosts();
+
+    next({
+      status: 200,
+      payload: posts,
+      meta: null,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
 export const addPostView = async (
   req: Request,
   _: Response,
@@ -86,6 +104,22 @@ export const getPostById = async (
 
   try {
     const post = await postService().getPostById(Number(id));
+
+    next({ status: 200, payload: post });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const getPrivatePostById = async (
+  req: Request,
+  _: Response,
+  next: NextFunction
+) => {
+  const { id } = req.params;
+
+  try {
+    const post = await postService().getPrivatePostById(Number(id));
 
     next({ status: 200, payload: post });
   } catch (err) {

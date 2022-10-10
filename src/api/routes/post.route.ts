@@ -12,6 +12,8 @@ import {
   uploadPostImage,
   getRecommendPosts,
   addPostView,
+  getPrivatePosts,
+  getPrivatePostById,
 } from '../controller';
 import { validationCheck } from '../middlewares';
 import { adminCheck } from '../middlewares/adminCheck';
@@ -97,6 +99,9 @@ export const postRouter = (app: Router) => {
     [query('id', 'id가 필요합니다.').exists().isNumeric(), validationCheck],
     likePost
   );
+
+  router.get('/private', authCheck(true), adminCheck, getPrivatePosts);
+  router.get('/private/:id', authCheck(true), adminCheck, getPrivatePostById);
 
   router.post('/image', uploadImage, uploadPostImage);
 };

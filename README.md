@@ -41,9 +41,9 @@ npm install && npm run start
 
 서버에서 유저와 상호작용을 담당하는 폴더입니다.
 
-하위 폴더에는 `controller`, `middlewares`, 'routes`가 있습니다.
+하위 폴더에는 `controller`, `middlewares`, `routes`가 있습니다.
 
-1. config
+2. config
 
 서버에서 사용하는 환경 변수에 대한 세팅 폴더입니다.
 
@@ -68,6 +68,7 @@ models 폴더와 api 폴더를 잇는 중간 레이어입니다.
 ## TODO LIST
 
 - [ ] 액세스, 리프레쉬 토큰
+- [ ] 유저 프로필 수정 기능
 
 --
 
@@ -75,3 +76,7 @@ models 폴더와 api 폴더를 잇는 중간 레이어입니다.
 - [ ] DB 마이그레이션 설정
 - [ ] 다이어그램 작성
 - [ ] 스웨거 작성
+
+--- 새 요구사항..
+
+1. 게시글 조회 증가는 따로 route 뚫어서 진행

@@ -44,6 +44,8 @@ export const uploadUserProfile = async (
       throw new Error('이미지 처리 중 오류가 발생했습니다.');
     }
 
+    const location = (file as unknown as Record<'location', string>).location;
+
     next({ status: 200, payload: location });
   } catch (err) {
     next(err);

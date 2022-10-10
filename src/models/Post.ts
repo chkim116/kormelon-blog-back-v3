@@ -27,6 +27,12 @@ class Post extends BaseDateColumn {
   @Column()
   title!: string;
 
+  @Column()
+  preview!: string;
+
+  @Column()
+  readTime!: number;
+
   @Column({ type: 'longtext' })
   content!: string;
 

@@ -1,5 +1,7 @@
 import Tag from 'src/models/Tag';
 
+export type PostOrderDto = 'like' | 'view';
+
 export interface PostCreateParamsDto {
   /**
    * 게시글의 썸네일
@@ -9,6 +11,10 @@ export interface PostCreateParamsDto {
    * 게시글 제목
    */
   title: string;
+  /**
+   * 게시글의 간략한 내용
+   */
+  preview: string;
   /**
    * 비밀 여부 정보
    *

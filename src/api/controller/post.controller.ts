@@ -9,6 +9,7 @@ import {
   PostUpdateParamsDto,
   subCategoryService,
   tagService,
+  PostOrderDto,
 } from '@services';
 
 export const getPosts = async (
@@ -16,16 +17,61 @@ export const getPosts = async (
   _: Response,
   next: NextFunction
 ) => {
-  const { page = 1, per = 10, keyword = '' } = req.query;
+  const { page = 1, per = 10, keyword = '', subCategoryId } = req.query;
 
   try {
     const { posts, total } = await postService().getPosts(
       Number(page),
       Number(per),
-      String(keyword)
+      String(keyword),
+      subCategoryId ? Number(subCategoryId) : undefined
     );
 
-    next({ status: 200, payload: posts, meta: { total, page, per } });
+    next({
+      status: 200,
+      payload: posts,
+      meta: { total, page: Number(page), per: Number(per) },
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const getRecommendPosts = async (
+  req: Request,
+  _: Response,
+  next: NextFunction
+) => {
+  const { take = 3, order = 'like' } = req.query;
+
+  try {
+    const posts = await postService().getRecommendPosts(
+      Number(take),
+      String(order) as PostOrderDto
+    );
+
+    next({ status: 200, payload: posts });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const addPostView = async (
+  req: Request,
+  _: Response,
+  next: NextFunction
+) => {
+  const { id } = req.params;
+  const isAdmin = req.user?.role;
+
+  try {
+    if (isAdmin) {
+      return;
+    }
+
+    await postService().addPostView(Number(id));
+
+    next({ status: 200, payload: null });
   } catch (err) {
     next(err);
   }
@@ -40,7 +86,6 @@ export const getPostById = async (
 
   try {
     const post = await postService().getPostById(Number(id));
-    await postService().addPostView(Number(id));
 
     next({ status: 200, payload: post });
   } catch (err) {

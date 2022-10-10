@@ -7,8 +7,13 @@ import {
 
 import { env } from '@config';
 import { Post } from '@models';
+import readingTime from 'reading-time';
 
-import { PostCreateParamsEntity, PostUpdateParamsEntity } from './post.dto';
+import {
+  PostCreateParamsEntity,
+  PostOrderDto,
+  PostUpdateParamsEntity,
+} from './post.dto';
 
 export function postService() {
   return getCustomRepository(PostService, env.mode);
@@ -22,26 +27,33 @@ class PostService extends Repository<Post> {
    * @param page 페이지 단위
    * @param per 페이지 당 게시글 수
    * @params keyword 페이지 제목
+   * @params subCategoryId 카테고리 아이디
    * @returns
    */
-  async getPosts(page: number, per: number, keyword: string) {
-    const [posts, total] = await this.createQueryBuilder('post')
+  async getPosts(
+    page: number,
+    per: number,
+    keyword: string,
+    subCategoryId?: number
+  ) {
+    let searchedPosts = await this.createQueryBuilder('post')
       .where({ title: Like(`%${keyword}%`) })
       .orWhere({ content: Like(`%${keyword}%`) })
+      .select(['post.subCategoryId', 'post.categoryId']);
+
+    if (subCategoryId) {
+      searchedPosts = await searchedPosts.where({ subCategoryId });
+    }
+
+    const [posts, total] = await searchedPosts
       .select([
         'post.title',
         'post.id',
+        'post.preview',
+        'post.readTime',
         'post.createdAt',
         'post.thumbnail',
-        'post.view',
-        'post.like',
       ])
-      .leftJoin('post.category', 'category')
-      .addSelect(['category.id', 'category.value'])
-      .leftJoin('post.subCategory', 'subCategory')
-      .addSelect(['subCategory.id', 'subCategory.value'])
-      .leftJoin('post.comments', 'comment')
-      .addSelect(['comment.id'])
       .orderBy({ 'post.id': 'DESC' })
       .skip((page - 1) * per)
       .take(per)
@@ -51,6 +63,23 @@ class PostService extends Repository<Post> {
       total,
       posts,
     };
+  }
+
+  /**
+   * 추천 게시글을 조회한다.
+   *
+   * @param take 조회할 개수
+   * @param order 조회 기준점. like or view
+   * @returns
+   */
+  async getRecommendPosts(take = 3, order: PostOrderDto) {
+    const posts = await this.find({
+      select: ['id', 'title', 'thumbnail', 'createdAt', 'readTime', 'preview'],
+      order: { [`${order}`]: 'DESC' },
+      take,
+    });
+
+    return posts;
   }
 
   /**
@@ -66,6 +95,8 @@ class PostService extends Repository<Post> {
       .select([
         'post.id',
         'post.title',
+        'post.preview',
+        'post.readTime',
         'post.thumbnail',
         'post.content',
         'post.view',
@@ -82,7 +113,21 @@ class PostService extends Repository<Post> {
       .addSelect(['tag.id', 'tag.value'])
       .getOne();
 
-    return post;
+    const [next = null, prev = null] = await Promise.all([
+      await this.createQueryBuilder('post')
+        .where('post.id > :id', { id })
+        .select(['post.id', 'post.title', 'post.thumbnail', 'post.createdAt'])
+        .limit(1)
+        .getOne(),
+      await this.createQueryBuilder('post')
+        .where('post.id < :id', { id })
+        .orderBy({ id: 'DESC' })
+        .select(['post.id', 'post.title', 'post.thumbnail', 'post.createdAt'])
+        .limit(1)
+        .getOne(),
+    ]);
+
+    return { post, next, prev };
   }
 
   /**
@@ -90,7 +135,10 @@ class PostService extends Repository<Post> {
    * @param params
    */
   async createPost(params: PostCreateParamsEntity) {
-    const post = await this.create(params);
+    const post = await this.create({
+      ...params,
+      readTime: readingTime(params.content, { wordsPerMinute: 500 }).minutes,
+    });
 
     await this.save(post);
   }

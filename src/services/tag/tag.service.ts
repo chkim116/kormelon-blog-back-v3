@@ -1,4 +1,10 @@
-import { EntityRepository, getCustomRepository, In, Repository } from 'typeorm';
+import {
+  EntityRepository,
+  getCustomRepository,
+  In,
+  Like,
+  Repository,
+} from 'typeorm';
 
 import { env } from '@config';
 import { Tag } from '@models';
@@ -19,22 +25,32 @@ class TagService extends Repository<Tag> {
    * @returns
    */
   async getTags(ids?: number[]) {
-    let tags;
+    const tags = await this.createQueryBuilder('tags')
+      .where({ id: In(ids || []) })
+      .select(['tags.id', 'tags.value'])
+      .leftJoin('tags.posts', 'post')
+      .addSelect(['post.id'])
+      .getMany();
 
-    if (ids?.length) {
-      tags = await this.createQueryBuilder('tags')
-        .where({ id: In(ids) })
-        .select(['tags.id', 'tags.value'])
-        .leftJoin('tags.posts', 'post')
-        .addSelect(['post.id'])
-        .getMany();
-    } else {
-      tags = await this.createQueryBuilder('tags')
-        .select(['tags.id', 'tags.value'])
-        .leftJoin('tags.posts', 'post')
-        .addSelect(['post.id'])
-        .getMany();
-    }
+    const total = await this.count();
+
+    return {
+      tags,
+      total,
+    };
+  }
+
+  /**
+   * 태그의 값을 이용해 태그를 조회한다.
+   *
+   * @param value
+   * @returns
+   */
+  async getTagsByValue(value: string) {
+    const tags = await this.createQueryBuilder('tags')
+      .where({ value: Like(value) })
+      .select(['tags.id', 'tags.value'])
+      .getMany();
 
     const total = await this.count();
 
@@ -66,22 +82,22 @@ class TagService extends Repository<Tag> {
    *
    * @param params
    */
-  async createTags({ values }: TagCreateParamsEntity) {
-    const exist = await this.findOne({ where: { value: In(values) } });
+  async createTags({ value }: TagCreateParamsEntity) {
+    const exist = await this.findOne({ where: { value } });
 
     if (exist) {
       throw new Error('이미 존재하는 태그입니다.');
     }
 
-    const promises = () =>
-      values.map(async (value) => {
-        const tag = new Tag();
-        tag.value = value;
-        await this.save(tag);
-      });
-
     try {
-      await Promise.all(promises());
+      const tag = new Tag();
+      tag.value = value;
+      await this.save(tag);
+
+      return {
+        id: tag.id,
+        value: tag.value,
+      };
     } catch (err: any) {
       throw new Error(err.message);
     }

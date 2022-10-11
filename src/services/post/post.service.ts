@@ -177,11 +177,13 @@ class PostService extends Repository<Post> {
     const [next = null, prev = null] = await Promise.all([
       await this.createQueryBuilder('post')
         .where('post.id > :id', { id })
+        .andWhere({ isPrivate: false })
         .select(['post.id', 'post.title', 'post.thumbnail', 'post.createdAt'])
         .limit(1)
         .getOne(),
       await this.createQueryBuilder('post')
         .where('post.id < :id', { id })
+        .andWhere({ isPrivate: false })
         .orderBy({ id: 'DESC' })
         .select(['post.id', 'post.title', 'post.thumbnail', 'post.createdAt'])
         .limit(1)

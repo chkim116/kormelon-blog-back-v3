@@ -27,6 +27,9 @@ class Notification extends BaseDateColumn {
   @Column({ nullable: true, default: null })
   userId!: string | null;
 
+  @Column()
+  message!: string;
+
   @ManyToOne(() => User, (user) => user.notifications, {
     cascade: true,
   })

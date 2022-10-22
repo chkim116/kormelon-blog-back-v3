@@ -27,6 +27,7 @@ class NotificationService extends Repository<Notification> {
         'notification.postId',
         'notification.commentId',
         'notification.isRead',
+        'notification.message',
         'notification.createdAt',
       ])
       .orderBy({ id: 'DESC' })

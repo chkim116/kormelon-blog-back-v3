@@ -41,12 +41,15 @@ export const createComment = async (
   const user = req.user;
 
   try {
+    const creatorUsername = user?.username || username;
+    const creatorPassword = user?.password || password;
+
     const newComment = await commentService().createComment({
       postId,
       value,
       userId: user?.id || null,
-      username: user?.username || username,
-      password: user?.password || password,
+      username: creatorUsername,
+      password: creatorPassword,
       isAnonymous: !user,
     });
 
@@ -56,6 +59,7 @@ export const createComment = async (
       const { id, userId, title } = await postService().exist(postId);
 
       await notificationService().createNotification({
+        message: `${creatorUsername}님이 게시글 - ${title}에 댓글을 작성하였습니다.`,
         commentId: newComment.id,
         userId,
         postId: id,
@@ -151,12 +155,15 @@ export const createCommentReply = async (
   try {
     const comment = await commentService().exist(commentId);
 
+    const creatorUsername = user?.username || username;
+    const creatorPassword = user?.password || password;
+
     await commentReplyService().createReply({
       postId,
       value,
       userId: user?.id || null,
-      username: user?.username || username,
-      password: user?.password || password,
+      username: creatorUsername,
+      password: creatorPassword,
       isAnonymous: !user,
       commentId,
     });
@@ -168,6 +175,7 @@ export const createCommentReply = async (
 
     if (!isAuthor) {
       await notificationService().createNotification({
+        message: `${creatorUsername}님이 댓글에 대댓글을 작성하였습니다.`,
         commentId: comment.id,
         userId: comment.userId,
         postId,

@@ -13,7 +13,9 @@ export const ormConfig: ConnectionOptions = {
   database: env.dbName,
   cache: true,
   logging: false,
-  synchronize: false,
+  synchronize: true,
+  timezone: 'Asia/Seoul',
+  charset: 'utf8mb4',
   entities,
 };
 

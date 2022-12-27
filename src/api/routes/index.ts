@@ -5,3 +5,4 @@ export * from './post.route';
 export * from './tag.route';
 export * from './comment.route';
 export * from './notification.route';
+export * from './view.route';

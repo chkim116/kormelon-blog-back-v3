@@ -16,7 +16,6 @@ export async function adminCheck(
   next: NextFunction
 ) {
   const userId = req.user?.id;
-
   try {
     await userService().checkAdmin(userId);
     next();

@@ -1,5 +1,3 @@
-import { Comment } from '@models';
-
 export interface CommentCreateParamsDto {
   /**
    * 댓글 텍스트

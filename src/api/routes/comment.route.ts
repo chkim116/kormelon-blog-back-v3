@@ -56,7 +56,6 @@ export const commentRouter = (app: Router) => {
     authCheck(false),
     [
       body('postId', '게시글 id가 필요합니다.').exists().isNumeric(),
-      body('commentId ', '댓글 id가 필요합니다.').exists().isString(),
       body('value', '댓글을 입력해 주세요.').exists().isString(),
       validationCheck,
     ],
@@ -67,7 +66,6 @@ export const commentRouter = (app: Router) => {
     authCheck(false),
     [
       body('postId', '게시글 id가 필요합니다.').exists().isNumeric(),
-      body('commentId ', '댓글 id가 필요합니다.').exists().isString(),
       body('value', '댓글을 입력해 주세요.').exists().isString(),
       validationCheck,
     ],

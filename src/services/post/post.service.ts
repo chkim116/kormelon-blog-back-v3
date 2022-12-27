@@ -66,14 +66,22 @@ class PostService extends Repository<Post> {
     };
   }
 
-  /**
-   * 비밀 유지 중인 게시글을 조회한다.
-   *
-   * @returns
-   */
-  async getPrivatePosts() {
+  async getPostRss() {
     const posts = await this.createQueryBuilder('post')
-      .where('post.isPrivate = :isPrivate', { isPrivate: true })
+      .select(['post.id', 'post.title', 'post.content', 'post.createdAt'])
+      .getMany();
+
+    return posts;
+  }
+
+  /**
+   * 해당 태그가 있는 게시글들을 조회한다.
+   */
+  async getPostsByTagId(tagId: number) {
+    const [posts, total] = await this.createQueryBuilder('post')
+      .leftJoin('post.tags', 'tags')
+      .addSelect(['tags.id'])
+      .where('tags.id = :id', { id: tagId })
       .select([
         'post.id',
         'post.title',
@@ -82,10 +90,39 @@ class PostService extends Repository<Post> {
         'post.createdAt',
         'post.readTime',
       ])
-      .orderBy({ 'post.id': 'ASC' })
-      .getMany();
+      .orderBy({ 'post.id': 'DESC' })
+      .getManyAndCount();
 
-    return posts;
+    return {
+      total,
+      posts,
+    };
+  }
+
+  /**
+   * 비밀 유지 중인 게시글을 조회한다.
+   *
+   * @returns
+   */
+  async getPrivatePosts() {
+    const [posts, total] = await this.createQueryBuilder('post')
+      .where({ isPrivate: true })
+      .select([
+        'post.title',
+        'post.id',
+        'post.preview',
+        'post.readTime',
+        'post.createdAt',
+        'post.thumbnail',
+        'post.isPrivate',
+      ])
+      .orderBy({ 'post.id': 'DESC' })
+      .getManyAndCount();
+
+    return {
+      total,
+      posts,
+    };
   }
 
   /**
@@ -214,7 +251,11 @@ class PostService extends Repository<Post> {
   async updatePost({ id, ...params }: PostUpdateParamsEntity) {
     const post = await this.exist(id);
 
-    await this.save({ ...post, ...params });
+    await this.save({
+      ...post,
+      ...params,
+      readTime: readingTime(params.content, { wordsPerMinute: 300 }).minutes,
+    });
   }
 
   /**

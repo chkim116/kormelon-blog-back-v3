@@ -32,17 +32,13 @@ export const createComment = async (
   _: Response,
   next: NextFunction
 ) => {
-  const {
-    postId,
-    value,
-    password = '',
-    username = '익명',
-  }: CommentCreateParamsDto = req.body;
+  const { postId, value, password, username }: CommentCreateParamsDto =
+    req.body;
   const user = req.user;
 
   try {
-    const creatorUsername = user?.username || username;
-    const creatorPassword = user?.password || password;
+    const creatorUsername = user?.username || username || '익명';
+    const creatorPassword = user?.password || password || '';
 
     const newComment = await commentService().createComment({
       postId,
@@ -76,12 +72,7 @@ export const updateComment = async (
   _: Response,
   next: NextFunction
 ) => {
-  const {
-    id,
-    value,
-    password = '',
-    username = '익명',
-  }: CommentUpdateParamsDto = req.body;
+  const { id, value, password, username }: CommentUpdateParamsDto = req.body;
 
   const user = req.user;
 
@@ -90,8 +81,8 @@ export const updateComment = async (
       id,
       value,
       userId: user?.id || null,
-      username: user?.username || username,
-      password: user?.password || password,
+      username: user?.username || username || '익명',
+      password: user?.password || password || '',
       isAnonymous: !user,
     });
 
@@ -127,10 +118,10 @@ export const getCommentReplies = async (
   _: Response,
   next: NextFunction
 ) => {
-  const { commentId } = req.body;
+  const { commentId } = req.query;
 
   try {
-    const comment = await commentReplyService().getReplies(commentId);
+    const comment = await commentReplyService().getReplies(String(commentId));
 
     next({ status: 200, payload: comment });
   } catch (err) {
@@ -144,19 +135,19 @@ export const createCommentReply = async (
   next: NextFunction
 ) => {
   const {
-    commentId = '',
     postId,
     value,
-    username = '익명',
-    password = '',
+    username,
+    password,
+    commentId = '',
   }: CommentReplyCreateParamsDto = req.body;
   const user = req.user;
 
   try {
     const comment = await commentService().exist(commentId);
 
-    const creatorUsername = user?.username || username;
-    const creatorPassword = user?.password || password;
+    const creatorUsername = user?.username || username || '익명';
+    const creatorPassword = user?.password || password || '';
 
     await commentReplyService().createReply({
       postId,
@@ -196,8 +187,8 @@ export const updateCommentReply = async (
   const {
     id,
     value,
-    password = '',
-    username = '익명',
+    password,
+    username,
   }: Omit<CommentUpdateParamsDto, 'postId'> = req.body;
 
   const user = req.user;
@@ -207,8 +198,8 @@ export const updateCommentReply = async (
       id,
       value,
       userId: user?.id || null,
-      username: user?.username || username,
-      password: user?.password || password,
+      username: user?.username || username || '익명',
+      password: user?.password || password || '',
       isAnonymous: !user,
     });
 
@@ -217,6 +208,7 @@ export const updateCommentReply = async (
     next(err);
   }
 };
+
 export const deleteCommentReply = async (
   req: Request,
   _: Response,

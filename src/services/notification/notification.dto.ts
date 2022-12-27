@@ -13,4 +13,8 @@ export interface NotificationCreateParamsDto {
    * 알림이 저장될 유저의 id 값
    */
   userId: string | null;
+  /**
+   * 알림 메시지
+   */
+  message: string;
 }

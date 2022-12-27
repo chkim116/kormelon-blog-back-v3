@@ -1,7 +1,10 @@
-import { Column, Entity } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('View')
 class View {
+  @PrimaryGeneratedColumn()
+  id!: number;
+
   @Column()
   today!: number;
 

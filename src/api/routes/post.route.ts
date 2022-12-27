@@ -14,6 +14,8 @@ import {
   addPostView,
   getPrivatePosts,
   getPrivatePostById,
+  getPostsByTagId,
+  getPostRss,
 } from '../controller';
 import { validationCheck } from '../middlewares';
 import { adminCheck } from '../middlewares/adminCheck';
@@ -21,6 +23,14 @@ import { authCheck } from '../middlewares/authCheck';
 import { uploadImage } from '../middlewares/uploadImage';
 
 const router = Router();
+const routerPrivate = Router();
+
+export const postPrivateRouter = (app: Router) => {
+  app.use('/private', routerPrivate);
+
+  routerPrivate.get('/', authCheck(), adminCheck, getPrivatePosts);
+  routerPrivate.get('/:id', authCheck(), adminCheck, getPrivatePostById);
+};
 
 export const postRouter = (app: Router) => {
   app.use('/post', router);
@@ -38,6 +48,13 @@ export const postRouter = (app: Router) => {
     getPosts
   );
   router.get(
+    '/search/tag',
+    query('tagId', '태그 Id는 Number 타입이어야 합니다.')
+      .optional()
+      .isNumeric(),
+    getPostsByTagId
+  );
+  router.get(
     '/recommend',
     [
       query('take', 'take는 숫자여야 합니다.').optional().isNumeric(),
@@ -48,6 +65,7 @@ export const postRouter = (app: Router) => {
     ],
     getRecommendPosts
   );
+  router.get('/rss', getPostRss);
   router.get('/:id', getPostById);
   router.put('/:id', authCheck(), addPostView);
   router.post(
@@ -99,9 +117,6 @@ export const postRouter = (app: Router) => {
     [query('id', 'id가 필요합니다.').exists().isNumeric(), validationCheck],
     likePost
   );
-
-  router.get('/private', authCheck(true), adminCheck, getPrivatePosts);
-  router.get('/private/:id', authCheck(true), adminCheck, getPrivatePostById);
 
   router.post('/image', uploadImage, uploadPostImage);
 };

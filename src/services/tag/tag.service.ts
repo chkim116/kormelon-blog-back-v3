@@ -25,12 +25,22 @@ class TagService extends Repository<Tag> {
    * @returns
    */
   async getTags(ids?: number[]) {
-    const tags = await this.createQueryBuilder('tags')
-      .where({ id: In(ids || []) })
-      .select(['tags.id', 'tags.value'])
-      .leftJoin('tags.posts', 'post')
-      .addSelect(['post.id'])
-      .getMany();
+    let tags: Tag[];
+
+    if (ids) {
+      tags = await this.createQueryBuilder('tags')
+        .where({ id: In(ids) })
+        .select(['tags.id', 'tags.value'])
+        .leftJoin('tags.posts', 'post')
+        .addSelect(['post.id'])
+        .getMany();
+    } else {
+      tags = await this.createQueryBuilder('tags')
+        .select(['tags.id', 'tags.value'])
+        .leftJoin('tags.posts', 'post')
+        .addSelect(['post.id'])
+        .getMany();
+    }
 
     const total = await this.count();
 

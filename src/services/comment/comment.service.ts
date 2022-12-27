@@ -5,7 +5,6 @@ import { Comment, CommentReply } from '@models';
 import bcrypt from 'bcrypt';
 
 import {
-  CommentCreateParamsDto,
   CommentCreateParamsEntity,
   CommentReplyCreateParamsEntity,
   CommentUpdateParamsEntity,
@@ -45,9 +44,23 @@ class CommentService extends Repository<Comment> {
         'comment.createdAt',
         'comment.deletedAt',
       ])
+      .leftJoin('comment.user', 'user')
+      .addSelect(['user.profileImage'])
       .withDeleted()
       .leftJoin('comment.commentReplies', 'reply')
-      .addSelect(['reply.id'])
+      .addSelect([
+        'reply.id',
+        'reply.value',
+        'reply.username',
+        'reply.userId',
+        'reply.isAnonymous',
+        'reply.createdAt',
+        'reply.deletedAt',
+      ])
+      .leftJoin('reply.user', 'replyUser')
+      .addSelect(['replyUser.profileImage'])
+      .orderBy({ 'reply.createdAt': 'DESC' })
+      .orderBy({ 'comment.createdAt': 'DESC' })
       .getMany();
 
     return comments;
@@ -198,6 +211,7 @@ class CommentReplyService extends Repository<CommentReply> {
         'reply.createdAt',
         'reply.deletedAt',
       ])
+      .orderBy({ 'reply.createdAt': 'DESC' })
       .getMany();
 
     return comments;

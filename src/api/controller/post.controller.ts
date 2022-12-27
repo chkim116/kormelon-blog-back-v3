@@ -37,6 +37,43 @@ export const getPosts = async (
   }
 };
 
+export const getPostRss = async (
+  _: Request,
+  __: Response,
+  next: NextFunction
+) => {
+  try {
+    const posts = await postService().getPostRss();
+
+    next({
+      status: 200,
+      payload: posts,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const getPostsByTagId = async (
+  req: Request,
+  _: Response,
+  next: NextFunction
+) => {
+  const { tagId } = req.query;
+
+  try {
+    const { posts, total } = await postService().getPostsByTagId(Number(tagId));
+
+    next({
+      status: 200,
+      payload: posts,
+      meta: { total },
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
 export const getRecommendPosts = async (
   req: Request,
   _: Response,
@@ -62,12 +99,12 @@ export const getPrivatePosts = async (
   next: NextFunction
 ) => {
   try {
-    const posts = await postService().getPrivatePosts();
+    const { posts, total } = await postService().getPrivatePosts();
 
     next({
       status: 200,
       payload: posts,
-      meta: null,
+      meta: { total },
     });
   } catch (err) {
     next(err);

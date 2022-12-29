@@ -39,25 +39,25 @@ export const env = {
    * @example
    * dev - localhost, prod - kormelon.com
    */
-  dbHost: process.env.DB_HOST,
+  dbHost: process.env.RDS_HOSTNAME,
   /**
    * DB port
    *
    */
-  dbPort: process.env.DB_PORT,
+  dbPort: process.env.RDS_PORT,
   /**
    * DB username
    *
    * @example
    * dev - blog_dev, prod - blog_prod
    */
-  dbUserName: process.env.DB_USERNAME,
+  dbUserName: process.env.RDS_USERNAME,
   /**
    * DB password
    */
-  dbPassword: process.env.DB_PASSWORD,
+  dbPassword: process.env.RDS_PASSWORD,
   /**
    * DB Name
    */
-  dbName: process.env.DB_NAME,
+  dbName: process.env.RDS_DB_NAME,
 };

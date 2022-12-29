@@ -32,12 +32,14 @@ class TagService extends Repository<Tag> {
         .where({ id: In(ids) })
         .select(['tags.id', 'tags.value'])
         .leftJoin('tags.posts', 'post')
+        .where('post.isPrivate = :isPrivate', { isPrivate: false })
         .addSelect(['post.id'])
         .getMany();
     } else {
       tags = await this.createQueryBuilder('tags')
         .select(['tags.id', 'tags.value'])
         .leftJoin('tags.posts', 'post')
+        .where('post.isPrivate = :isPrivate', { isPrivate: false })
         .addSelect(['post.id'])
         .getMany();
     }

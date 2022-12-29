@@ -14,6 +14,8 @@ export const ormConfig: ConnectionOptions = {
   cache: true,
   logging: false,
   synchronize: false,
+  timezone: 'Asia/Seoul',
+  charset: 'utf8mb4',
   entities,
 };
 

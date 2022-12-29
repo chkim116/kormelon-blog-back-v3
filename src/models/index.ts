@@ -6,6 +6,7 @@ import Post from './Post';
 import SubCategory from './SubCategory';
 import Tag from './Tag';
 import User from './User';
+import View from './View';
 
 export const entities = [
   Category,
@@ -16,6 +17,7 @@ export const entities = [
   User,
   Post,
   Tag,
+  View,
 ];
 
 export {
@@ -27,4 +29,5 @@ export {
   User,
   Post,
   Tag,
+  View,
 };

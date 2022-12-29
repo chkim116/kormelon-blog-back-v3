@@ -1,13 +1,14 @@
 {
   "name": "kormelon-blog-back-v3",
-  "version": "0.0.5",
+  "version": "1.0.0",
   "description": "kormelon blog server",
   "main": "./dist/app.js",
   "scripts": {
     "test": "jest",
     "build": "swc src -d dist",
     "build:dev": "env-cmd -f .env.development npm run build",
-    "build:prod": "env-cmd -f .env.production npm run build",
+    "build:prod": "cross-env NODE_ENV=production env-cmd -f .env.production npm run build",
+    "generate-eb-zip": "sh ./scripts/eb-zip.sh",
     "dev": "nodemon --ext ts --exec \"npm run build:dev && cross-env NODE_ENV=development env-cmd -f .env.development node --experimental-specifier-resolution=node --inspect dist/app.js\"",
     "start": "npm run build:prod && cross-env NODE_ENV=production env-cmd -f .env.production node --experimental-specifier-resolution=node dist/app.js"
   },

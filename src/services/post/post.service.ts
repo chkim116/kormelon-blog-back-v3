@@ -82,6 +82,7 @@ class PostService extends Repository<Post> {
       .leftJoin('post.tags', 'tags')
       .addSelect(['tags.id'])
       .where('tags.id = :id', { id: tagId })
+      .andWhere({ isPrivate: false })
       .select([
         'post.id',
         'post.title',

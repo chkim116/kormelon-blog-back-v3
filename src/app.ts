@@ -1,15 +1,24 @@
 import express from 'express';
+import 'reflect-metadata';
 
 import { env } from '@config';
+import loaders from '@loaders';
 
-const app = express();
+async function init() {
+  const app = express();
 
-app.get('/test', (req, res) => {
-  res.status(200).send('Hello world');
-});
+  await loaders(app);
 
-app.listen(env.port, () => {
-  console.log(
-    `Server running on Port: ${env.port}\n🚀 http://localhost:${env.port}`
-  );
-});
+  app.get('/test', (req, res) => {
+    res.status(200).send('Hello world');
+  });
+
+  app.listen(env.port, () => {
+    console.log(
+      `\n🌟 Server running on Port: ${env.port}\n🚀 http://localhost:${env.port}`
+    );
+    console.log(`Node Version: ${process.version}`);
+  });
+}
+
+init();

@@ -60,7 +60,7 @@ class TagService extends Repository<Tag> {
    */
   async getTagsByValue(value: string) {
     const tags = await this.createQueryBuilder('tags')
-      .where({ value: Like(value) })
+      .where({ value: Like(`%${value}%`) })
       .select(['tags.id', 'tags.value'])
       .getMany();
 

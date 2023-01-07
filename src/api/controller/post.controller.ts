@@ -19,7 +19,6 @@ export const getPosts = async (
 ) => {
   const { page = 1, per = 10, keyword = '', subCategoryId } = req.query;
 
-  console.log(subCategoryId);
   try {
     const { posts, total } = await postService().getPosts(
       Number(page),

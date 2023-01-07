@@ -9,6 +9,7 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 
 import { errorHandler, payloadHandler } from '../api/middlewares';
+import { rateLimiter } from './limiter';
 
 export async function expressConfig(app: Express) {
   // security
@@ -30,6 +31,7 @@ export async function expressConfig(app: Express) {
   app.use(urlencoded({ extended: true }));
 
   // routes
+  app.use(rateLimiter);
   app.use(env.prefix, routes());
   app.use(payloadHandler);
   app.use(errorHandler);

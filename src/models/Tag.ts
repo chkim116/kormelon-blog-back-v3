@@ -8,7 +8,7 @@ import {
 
 import Post from './Post';
 
-@Entity('Tag')
+@Entity()
 class Tag {
   @PrimaryGeneratedColumn()
   id!: number;

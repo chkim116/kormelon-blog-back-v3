@@ -19,6 +19,7 @@ export const getPosts = async (
 ) => {
   const { page = 1, per = 10, keyword = '', subCategoryId } = req.query;
 
+  console.log(subCategoryId);
   try {
     const { posts, total } = await postService().getPosts(
       Number(page),
@@ -258,7 +259,12 @@ export const uploadPostImage = async (
       throw new Error('이미지 처리 중 오류가 발생했습니다.');
     }
 
-    next({ status: 200, payload: location });
+    if ('location' in file) {
+      next({ status: 200, payload: file.location });
+      return;
+    }
+
+    throw new Error('location이 존재하지 않습니다.');
   } catch (err) {
     next(err);
   }

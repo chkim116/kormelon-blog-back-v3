@@ -57,6 +57,7 @@ class PostService extends Repository<Post> {
 
   async getPostRss() {
     const posts = await this.createQueryBuilder('post')
+      .where({ isPrivate: false })
       .select(['post.id', 'post.title', 'post.content', 'post.createdAt'])
       .getMany();
 
@@ -124,6 +125,7 @@ class PostService extends Repository<Post> {
    */
   async getRecommendPosts(take = 3, order: PostOrderDto) {
     const posts = await this.find({
+      where: { isPrivate: false },
       select: ['id', 'title', 'thumbnail', 'createdAt', 'readTime', 'preview'],
       order: { [`${order}`]: 'DESC' },
       take,

@@ -15,15 +15,13 @@ jobs:
     steps:
       - checkout
       - node/install:
-          node-version: '16.13'
-          install-yarn: true
+          node-version: '16.14'
       - restore_cache:
-          key: cache-live-{{ checksum "yarn.lock" }}
-      - run: yarn install
-      - run: mkdir -p ./logs
-      - run: yarn build
+          key: cache-live-{{ checksum "package-lock.json" }}
+      - run: npm install
+      - run: npm run build
       - save_cache:
-          key: cache-live-{{ checksum "yarn.lock" }}
+          key: cache-live-{{ checksum "package-lock.json" }}
           paths:
             - ./node_modules
       - attach_workspace:
@@ -36,7 +34,7 @@ jobs:
       - run:
           name: 'Deploy to Elastic Beanstalk'
           command: |
-            yarn generate-eb-zip
+            npm run generate-eb-zip
             eb init kormelon-api-v2 --platform "Node.js 16" --region "ap-northeast-2"
             eb deploy Kormelonapiv2-env
 
@@ -48,5 +46,5 @@ workflows:
           filters:
             branches:
               only:
-                - v2
+                - main
           context: kormelon

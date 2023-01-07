@@ -10,7 +10,7 @@ import { BaseDateColumn } from './common/BaseDateColumn';
 import Post from './Post';
 import SubCategory from './SubCategory';
 
-@Entity('Category')
+@Entity()
 class Category extends BaseDateColumn {
   @PrimaryGeneratedColumn()
   id!: number;

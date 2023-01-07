@@ -17,6 +17,7 @@ export const ormConfig: ConnectionOptions = {
   timezone: 'Asia/Seoul',
   charset: 'utf8mb4',
   entities,
+  connectTimeout: 60_000,
 };
 
 export const mysqlLoader = async (): Promise<Connection | null> => {

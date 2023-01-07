@@ -16,7 +16,7 @@ import SubCategory from './SubCategory';
 import Tag from './Tag';
 import User from './User';
 
-@Entity('Post')
+@Entity()
 class Post extends BaseDateColumn {
   @PrimaryGeneratedColumn()
   id!: number;

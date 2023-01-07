@@ -10,7 +10,7 @@ import type { Relation } from 'typeorm';
 import { BaseDateColumn } from './common/BaseDateColumn';
 import User from './User';
 
-@Entity('Notification')
+@Entity()
 class Notification extends BaseDateColumn {
   @PrimaryGeneratedColumn()
   id!: number;

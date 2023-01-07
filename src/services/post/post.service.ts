@@ -36,32 +36,21 @@ class PostService extends Repository<Post> {
     keyword: string,
     subCategoryId?: number
   ) {
-    let searchedPosts = await this.createQueryBuilder('post')
-      .where({ title: Like(`%${keyword}%`) })
-      .orWhere({ content: Like(`%${keyword}%`) })
-      .select(['post.subCategoryId', 'post.categoryId']);
-
-    if (subCategoryId) {
-      searchedPosts = await searchedPosts.where({ subCategoryId });
-    }
-
-    const [posts, total] = await searchedPosts
-      .where({ isPrivate: false })
-      .select([
-        'post.title',
-        'post.id',
-        'post.preview',
-        'post.readTime',
-        'post.createdAt',
-        'post.thumbnail',
-      ])
-      .orderBy({ 'post.id': 'DESC' })
-      .skip((page - 1) * per)
-      .take(per)
-      .getManyAndCount();
+    const posts = await this.find({
+      where: {
+        isPrivate: false,
+        title: Like(`%${keyword}%`),
+        content: Like(`%${keyword}%`),
+        ...(subCategoryId && { subCategoryId }),
+      },
+      select: ['title', 'id', 'preview', 'readTime', 'createdAt', 'thumbnail'],
+      order: { id: 'DESC' },
+      skip: (page - 1) * per,
+      take: per,
+    });
 
     return {
-      total,
+      total: posts.length,
       posts,
     };
   }

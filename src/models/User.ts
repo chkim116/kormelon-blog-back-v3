@@ -9,7 +9,7 @@ export enum UserRoleEnum {
   ADMIN = 'admin',
   MEMBER = 'member',
 }
-@Entity('User')
+@Entity()
 class User extends BaseDateColumn {
   @PrimaryGeneratedColumn('uuid')
   id!: string;

@@ -11,7 +11,7 @@ import Comment from './Comment';
 import { BaseDateColumn } from './common/BaseDateColumn';
 import User from './User';
 
-@Entity('CommentReply')
+@Entity()
 class CommentReply extends BaseDateColumn {
   @PrimaryGeneratedColumn('uuid')
   id!: string;

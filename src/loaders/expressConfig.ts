@@ -17,7 +17,13 @@ export async function expressConfig(app: Express) {
   app.use(
     cors({
       origin:
-        process.env.NODE_ENV === 'production' ? 'https://kormelon.com' : true,
+        process.env.NODE_ENV === 'production'
+          ? [
+              'https://kormelon.com',
+              'https://www.kormelon.com',
+              'https://kormelon-blog-front-v3.vercel.app',
+            ]
+          : true,
       credentials: true,
     })
   );

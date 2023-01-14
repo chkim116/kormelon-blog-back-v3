@@ -42,6 +42,7 @@ class ViewService extends Repository<View> {
     }
 
     return await this.save({
+      ...view,
       total: view.total + view.today,
       today: 0,
       ips: [],

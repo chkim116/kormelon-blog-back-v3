@@ -22,6 +22,7 @@ export async function expressConfig(app: Express) {
               'https://kormelon.com',
               'https://www.kormelon.com',
               'https://kormelon-blog-front-v3.vercel.app',
+              'https://kormelon.netlify.app',
             ]
           : true,
       credentials: true,

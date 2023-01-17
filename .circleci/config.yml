@@ -47,4 +47,5 @@ workflows:
             branches:
               only:
                 - main
+                - test
           context: kormelon

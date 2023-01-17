@@ -67,7 +67,7 @@ export const postRouter = (app: Router) => {
   );
   router.get('/rss', getPostRss);
   router.get('/:id', getPostById);
-  router.put('/:id', authCheck(), addPostView);
+  router.put('/:id', authCheck(false), addPostView);
   router.post(
     '/',
     authCheck(),

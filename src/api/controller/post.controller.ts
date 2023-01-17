@@ -139,11 +139,14 @@ export const getPostById = async (
 ) => {
   const { id } = req.params;
 
+  console.log('request post id =>> ', id);
+
   try {
     const post = await postService().getPostById(Number(id));
 
     next({ status: 200, payload: post });
   } catch (err) {
+    console.error('request fail .. =>> ', err);
     next(err);
   }
 };

@@ -23,9 +23,8 @@ export const errorHandler = (
 ) => {
   err.status = err.status || 400;
 
-  if (env.mode == 'development') {
-    console.log(`error ${err.message}`);
-  }
+  console.log('ERROR BODY ====>>>> ', err, '\n');
+  console.log('ERROR MESSAGE ====>>>> ', err.message, '\n');
 
   return res
     .status(err.status)

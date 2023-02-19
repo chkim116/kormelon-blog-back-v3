@@ -27,24 +27,29 @@ class TagService extends Repository<Tag> {
   async getTags(ids?: number[]) {
     let tags: Tag[];
 
-    if (ids) {
+    if (ids?.length) {
       tags = await this.createQueryBuilder('tags')
-        .where({ id: In(ids) })
+        .where('tags.id IN (:id)', { id: ids })
         .select(['tags.id', 'tags.value'])
         .leftJoin('tags.posts', 'post')
-        .where('post.isPrivate = :isPrivate', { isPrivate: false })
-        .addSelect(['post.id'])
+        .addSelect(['post.id', 'post.isPrivate'])
         .getMany();
     } else {
       tags = await this.createQueryBuilder('tags')
         .select(['tags.id', 'tags.value'])
         .leftJoin('tags.posts', 'post')
-        .where('post.isPrivate = :isPrivate', { isPrivate: false })
-        .addSelect(['post.id'])
+        .addSelect(['post.id', 'post.isPrivate'])
         .getMany();
     }
 
-    const total = await this.count();
+    tags = tags.map((tag) => {
+      return {
+        ...tag,
+        posts: tag.posts.filter((post) => post.isPrivate !== true),
+      };
+    });
+
+    const total = tags.length;
 
     return {
       tags,

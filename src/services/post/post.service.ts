@@ -36,7 +36,7 @@ class PostService extends Repository<Post> {
     keyword: string,
     subCategoryId?: number
   ) {
-    const posts = await this.find({
+    const [posts, total] = await this.findAndCount({
       where: {
         isPrivate: false,
         title: Like(`%${keyword}%`),
@@ -50,7 +50,7 @@ class PostService extends Repository<Post> {
     });
 
     return {
-      total: posts.length,
+      total,
       posts,
     };
   }

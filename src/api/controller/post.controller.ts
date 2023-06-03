@@ -175,7 +175,12 @@ export const createPost = async (
   try {
     await categoryService().exist(json.categoryId);
     await subCategoryService().exist(json.subCategoryId);
-    const { tags } = await tagService().getTags(json.tags);
+
+    const { tags } = json.tags.length
+      ? await tagService().getTags(json.tags)
+      : {
+          tags: [],
+        };
 
     const params: PostCreateParamsEntity = {
       ...json,

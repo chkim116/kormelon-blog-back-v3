@@ -15,7 +15,7 @@ const upload = multer({
   storage: multerS3({
     s3,
     acl: 'public-read',
-    bucket: 'assets-kormelon-v2',
+    bucket: 'assets-kormelon-v3',
     key: function (req, file, cb) {
       cb(null, file.originalname);
     },

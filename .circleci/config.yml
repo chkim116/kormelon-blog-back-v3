@@ -35,7 +35,7 @@ jobs:
           name: 'Deploy to Elastic Beanstalk'
           command: |
             npm run generate-eb-zip
-            eb init kormelon-v3 --platform "Node.js 16" --region "ap-northeast-2"
+            eb init kormelon-v3-last --platform "Node.js 16" --region "ap-northeast-2"
             eb deploy Kormelon-v3-last-env
 
 workflows:

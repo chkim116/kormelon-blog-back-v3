@@ -17,15 +17,22 @@ export const getPosts = async (
   _: Response,
   next: NextFunction
 ) => {
-  const { page = 1, per = 10, keyword = '', subCategoryId } = req.query;
+  const {
+    page = 1,
+    per = 10,
+    keyword = '',
+    categoryId,
+    subCategoryId,
+  } = req.query;
 
   try {
-    const { posts, total } = await postService().getPosts(
-      Number(page),
-      Number(per),
-      String(keyword),
-      subCategoryId ? Number(subCategoryId) : undefined
-    );
+    const { posts, total } = await postService().getPosts({
+      categoryId: Number(categoryId || 0),
+      keyword: String(keyword),
+      page: Number(page),
+      per: Number(per),
+      subCategoryId: Number(subCategoryId || 0),
+    });
 
     next({
       status: 200,

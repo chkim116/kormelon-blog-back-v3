@@ -2,6 +2,14 @@ import Tag from 'src/models/Tag';
 
 export type PostOrderDto = 'like' | 'view';
 
+export interface PostSearchParamsDto {
+  page: number;
+  per: number;
+  keyword: string;
+  categoryId: number;
+  subCategoryId: number;
+}
+
 export interface PostCreateParamsDto {
   /**
    * 게시글의 썸네일

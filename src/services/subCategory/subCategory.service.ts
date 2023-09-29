@@ -14,9 +14,12 @@ class SubCategoryService extends Repository<SubCategory> {
    *
    * @returns
    */
-  async getSubCategories() {
+  async getSubCategories(categoryId: number) {
     const results = await this.createQueryBuilder('subCategory')
+      .where({ categoryId: categoryId })
       .select(['subCategory.id', 'subCategory.value', 'subCategory.categoryId'])
+      .leftJoin('subCategory.category', 'category')
+      .addSelect(['category.id', 'category.value'])
       .leftJoin('subCategory.posts', 'post')
       .addSelect(['post.id'])
       .getMany();

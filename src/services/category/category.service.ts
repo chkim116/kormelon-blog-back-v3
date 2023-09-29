@@ -10,7 +10,7 @@ export function categoryService() {
 @EntityRepository(Category)
 class CategoryService extends Repository<Category> {
   async getCategories() {
-    return await this.createQueryBuilder('category')
+    const results = await this.createQueryBuilder('category')
       .select(['category.id', 'category.value'])
       .leftJoin('category.subCategories', 'subCategory')
       .orderBy('subCategory.value', 'ASC')
@@ -19,7 +19,16 @@ class CategoryService extends Repository<Category> {
         'subCategory.value',
         'subCategory.categoryId',
       ])
+      .leftJoin('category.posts', 'post')
+      .addSelect(['post.id'])
       .getMany();
+
+    return results
+      ? results.map((category) => ({
+          ...category,
+          posts: category.posts.length,
+        }))
+      : [];
   }
 
   /**

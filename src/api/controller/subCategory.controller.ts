@@ -3,12 +3,16 @@ import { NextFunction, Request, Response } from 'express';
 import { subCategoryService } from '@services';
 
 export const getSubCategories = async (
-  __: Request,
+  req: Request,
   _: Response,
   next: NextFunction
 ) => {
+  const { categoryId } = req.query;
+
   try {
-    const subCategories = await subCategoryService().getSubCategories();
+    const subCategories = await subCategoryService().getSubCategories(
+      categoryId as unknown as number
+    );
 
     next({ status: 200, payload: subCategories });
   } catch (err) {

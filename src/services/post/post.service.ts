@@ -12,6 +12,7 @@ import readingTime from 'reading-time';
 import {
   PostCreateParamsEntity,
   PostOrderDto,
+  PostSearchParamsDto,
   PostUpdateParamsEntity,
 } from './post.dto';
 
@@ -30,17 +31,18 @@ class PostService extends Repository<Post> {
    * @params subCategoryId 카테고리 아이디
    * @returns
    */
-  async getPosts(
-    page: number,
-    per: number,
-    keyword: string,
-    subCategoryId?: number
-  ) {
+  async getPosts({
+    keyword,
+    per,
+    page,
+    categoryId,
+    subCategoryId,
+  }: PostSearchParamsDto) {
     const [posts, total] = await this.findAndCount({
       where: {
         isPrivate: false,
         title: Like(`%${keyword}%`),
-        content: Like(`%${keyword}%`),
+        ...(categoryId && { categoryId }),
         ...(subCategoryId && { subCategoryId }),
       },
       select: ['title', 'id', 'preview', 'readTime', 'createdAt', 'thumbnail'],

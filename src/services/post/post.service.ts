@@ -41,7 +41,7 @@ class PostService extends Repository<Post> {
     const [posts, total] = await this.findAndCount({
       where: {
         isPrivate: false,
-        title: Like(`%${keyword}%`),
+        ...(keyword && { title: Like(`%${keyword}%`) }),
         ...(categoryId && { categoryId }),
         ...(subCategoryId && { subCategoryId }),
       },

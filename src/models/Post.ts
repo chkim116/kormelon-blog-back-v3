@@ -21,7 +21,7 @@ class Post extends BaseDateColumn {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Column()
+  @Column({ type: 'longtext' })
   thumbnail!: string;
 
   @Column()
@@ -33,7 +33,11 @@ class Post extends BaseDateColumn {
   @Column()
   readTime!: number;
 
-  @Column({ type: 'longtext' })
+  @Column({
+    type: 'longtext',
+    charset: 'utf8mb4',
+    collation: 'utf8mb4_unicode_ci',
+  })
   content!: string;
 
   @Column({ default: 0 })

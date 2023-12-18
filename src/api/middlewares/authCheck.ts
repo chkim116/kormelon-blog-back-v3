@@ -16,7 +16,8 @@ import jwt from 'jsonwebtoken';
  */
 export function authCheck(required = true) {
   return (req: Request, res: Response, next: NextFunction) => {
-    const token = req.headers.authorization;
+    const token =
+      req.headers.authorization || req.cookies['kormelon_token'] || '';
 
     if (!token) {
       if (required) {

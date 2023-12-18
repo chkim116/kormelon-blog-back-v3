@@ -2,6 +2,7 @@ import {
   EntityRepository,
   getCustomRepository,
   Like,
+  Not,
   Repository,
 } from 'typeorm';
 
@@ -41,7 +42,7 @@ class PostService extends Repository<Post> {
     const [posts, total] = await this.findAndCount({
       where: {
         isPrivate: false,
-        title: Like(`%${keyword}%`),
+        ...(keyword && { title: Like(`%${keyword}%`) }),
         ...(categoryId && { categoryId }),
         ...(subCategoryId && { subCategoryId }),
       },
@@ -125,13 +126,25 @@ class PostService extends Repository<Post> {
    * @param order 조회 기준점. like or view
    * @returns
    */
-  async getRecommendPosts(take = 3, order: PostOrderDto) {
-    const posts = await this.find({
-      where: { isPrivate: false },
-      select: ['id', 'title', 'thumbnail', 'createdAt', 'readTime', 'preview'],
-      order: { [`${order}`]: 'DESC' },
-      take,
-    });
+  async getRecommendPosts(excludeId: number, take = 3, order: PostOrderDto) {
+    const posts = await this.createQueryBuilder('post')
+      .where({
+        isPrivate: false,
+      })
+      .andWhere({
+        id: Not(excludeId),
+      })
+      .select([
+        'post.id',
+        'post.title',
+        'post.thumbnail',
+        'post.createdAt',
+        'post.readTime',
+        'post.preview',
+      ])
+      .take(take)
+      .orderBy({ [`post.${order}`]: 'DESC' })
+      .getMany();
 
     return posts;
   }

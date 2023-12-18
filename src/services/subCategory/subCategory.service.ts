@@ -21,6 +21,7 @@ class SubCategoryService extends Repository<SubCategory> {
       .leftJoin('subCategory.category', 'category')
       .addSelect(['category.id', 'category.value'])
       .leftJoin('subCategory.posts', 'post')
+      .where('post.isPrivate = :isPrivate', { isPrivate: false })
       .addSelect(['post.id'])
       .getMany();
 

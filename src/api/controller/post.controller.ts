@@ -86,10 +86,11 @@ export const getRecommendPosts = async (
   _: Response,
   next: NextFunction
 ) => {
-  const { take = 3, order = 'like' } = req.query;
+  const { excludeId, take = 3, order = 'like' } = req.query;
 
   try {
     const posts = await postService().getRecommendPosts(
+      Number(excludeId),
       Number(take),
       String(order) as PostOrderDto
     );
@@ -213,7 +214,11 @@ export const updatePost = async (
   try {
     await categoryService().exist(json.categoryId);
     await subCategoryService().exist(json.subCategoryId);
-    const { tags } = await tagService().getTags(json.tags);
+    const { tags } = json.tags.length
+      ? await tagService().getTags(json.tags)
+      : {
+          tags: [],
+        };
 
     const params: PostUpdateParamsEntity = { ...json, tags, userId };
     await postService().updatePost(params);
@@ -265,6 +270,7 @@ export const uploadPostImage = async (
   next: NextFunction
 ) => {
   const { file } = req;
+
   try {
     if (!file) {
       throw new Error('이미지 처리 중 오류가 발생했습니다.');

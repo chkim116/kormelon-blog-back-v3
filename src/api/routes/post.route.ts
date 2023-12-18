@@ -57,6 +57,7 @@ export const postRouter = (app: Router) => {
   router.get(
     '/recommend',
     [
+      query('excludeId', '게시글 id는 Number 타입이어야 합니다.').isNumeric(),
       query('take', 'take는 숫자여야 합니다.').optional().isNumeric(),
       query('order', 'order는 like 또는 view여야 합니다.')
         .optional()
